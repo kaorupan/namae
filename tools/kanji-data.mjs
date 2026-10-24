@@ -38,7 +38,18 @@ const kangxi = new Map(q("select 漢字 ch, 康熙字典体 old from joyo_kangxi
 const variants = new Map();
 for (const r of q("select UCS ch, value from unihan_kJinmeiyoKanji")) {
   const m = r.value.match(/:(U\+[0-9A-F]+)/);
-  if (m) { const base = fromU(m[1]); (variants.get(base) || variants.set(base, []).get(base)).push(r.ch); continue; }
+  const cp = r.ch.codePointAt(0);
+  if (cp >= 0xf900 && cp <= 0xfaff) continue; // 互換用の字（見た目が同じ別コード）はページを作らない
+  if (m) {
+    const base = fromU(m[1]);
+    (variants.get(base) || variants.set(base, []).get(base)).push(r.ch);
+    if (out.has(base) && out.get(base).type === "joyo") { // 常用漢字の旧字体・異体字：読みは常用漢字のものを使う
+      out.set(r.ch, { ch: r.ch, type: "jinmei", parent: base, readings: out.get(base).readings.map((x) => ({ r: x.r, on: x.on, ex: [], note: "" })) });
+      order.push(r.ch);
+      continue;
+    }
+    (variants.get(r.ch) || variants.set(r.ch, []).get(r.ch)).push(base); // 人名用漢字どうしは、おたがいのページで紹介する
+  }
   if (out.has(r.ch)) continue;
   const jp = one("select value from unihan_kJapanese where UCS = ?", r.ch);
   const rs = (jp ? jp.value.split(" ") : []).filter(Boolean);
@@ -48,7 +59,7 @@ for (const r of q("select UCS ch, value from unihan_kJinmeiyoKanji")) {
 const list = order.map((ch) => {
   const k = out.get(ch), rad = radical(ch);
   return {
-    ch, type: k.type, strokes: strokes(ch), rad: rad ? rad.n : null, radCh: rad ? rad.ch : "",
+    ch, type: k.type, parent: k.parent || "", strokes: strokes(ch), rad: rad ? rad.n : null, radCh: rad ? rad.ch : "",
     old: kangxi.get(ch) || "", jinmeiVariants: variants.get(ch) || [],
     on: [...new Set(k.readings.filter((x) => x.on).map((x) => x.r))],
     kun: [...new Set(k.readings.filter((x) => !x.on).map((x) => x.r))],

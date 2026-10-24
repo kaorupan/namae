@@ -2,6 +2,7 @@
 //   データは data/kanji.json（tools/kanji-data.mjs で作る）。
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import IMI from "../data/kanji-imi.mjs";
 
 const kata2hira = (s) => s.replace(/[ァ-ヶ]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0x60));
 const GYO = [["あ", "あいうえお"], ["か", "かきくけこがぎぐげご"], ["さ", "さしすせそざじずぜぞ"], ["た", "たちつてとだぢづでど"], ["な", "なにぬねの"], ["は", "はひふへほばびぶべぼぱぴぷぺぽ"], ["ま", "まみむめも"], ["や", "やゆよ"], ["ら", "らりるれろ"], ["わ", "わを"]];
@@ -44,23 +45,27 @@ export function buildKanji({ ROOT, page, write, esc, people, L, phrases = new Ma
 <p class="note">読みと例は、文化庁「常用漢字表」によります。カタカナは音読み、ひらがなは訓読みです。</p>`
       : `${k.readings.length ? `<table class="ktable"><thead><tr><th scope="col">読み</th><th scope="col">種類</th></tr></thead><tbody>${k.readings.map((r) => `<tr><th scope="row">${esc(r.r)}</th><td>${r.on ? "音読み" : "訓読み"}</td></tr>`).join("")}</tbody></table>` : ""}
 <p class="note">人名用漢字には、国が定めた読みはありません。ここでは辞書などで知られている読みを参考として載せています。名前の読み方は自由に決められます。</p>`;
-    const variant = [k.old ? `旧字体は「${esc(k.old)}」です。` : "", k.jinmeiVariants.length ? `「${esc(k.jinmeiVariants.join("」「"))}」も人名用漢字として名前に使えます。` : ""].join("");
+    const parentNote = k.parent ? `「${esc(k.ch)}」は常用漢字「<a href="../${k.parent}/">${esc(k.parent)}</a>」の旧字体・異体字で、人名用漢字として名前に使えます。読みは「${esc(k.parent)}」と同じです。` : "";
+    const variant = [k.old ? `旧字体は「${esc(k.old)}」です。` : "", k.jinmeiVariants.length ? `${k.jinmeiVariants.map((c) => byCh.has(c) ? `「<a href="../${c}/">${esc(c)}</a>」` : `「${esc(c)}」`).join("")}も人名用漢字として名前に使えます。` : ""].join("");
     const readTxt = [onH.length ? `音読みは「${onH.join("・")}」` : "", k.kun.length ? `訓読みは「${k.kun.slice(0, 4).join("・")}」` : ""].filter(Boolean).join("、");
-    const desc = `「${k.ch}」は${k.strokes}画の${TYPE[k.type]}。${readTxt || "読み"}など。部首は「${k.radCh}」。名前に使えるか、姓名判断での画数、同じ読み・同じ画数の漢字も紹介します。`;
+    const desc = `「${k.ch}」は${k.strokes}画の${TYPE[k.type]}。${IMI[k.ch] ? "意味は「" + IMI[k.ch][0].replace(/。$/, "") + "」。" : ""}${readTxt || "読み"}など。部首は「${k.radCh}」。名前に使えるか、姓名判断での画数、同じ読み・同じ画数の漢字も紹介します。`;
     const body = `<section class="sec kmain" aria-label="基本の情報">
 <div class="kbig" aria-hidden="true">${esc(k.ch)}</div>
 <dl class="kinfo">
+${IMI[k.ch] ? `<div><dt>意味</dt><dd>${esc(IMI[k.ch][0])}</dd></div>` : ""}
 <div><dt>画数</dt><dd><a href="${up}kakusu/${k.strokes}/">${k.strokes}画</a></dd></div>
 <div><dt>部首</dt><dd>${esc(k.radCh)}<small>（${k.rad}番）</small></dd></div>
 <div><dt>種類</dt><dd>${TYPE[k.type]}</dd></div>
 ${onH.length ? `<div><dt>音読み</dt><dd>${onH.map((r) => yomiLink(r, up)).join("・")}</dd></div>` : ""}
 ${k.kun.length ? `<div><dt>訓読み</dt><dd>${k.kun.map((r) => yomiLink(r, up)).join("・")}</dd></div>` : ""}
 ${k.old ? `<div><dt>旧字体</dt><dd>${esc(k.old)}</dd></div>` : ""}
+${k.parent ? `<div><dt>新字体</dt><dd><a href="../${k.parent}/">${esc(k.parent)}</a></dd></div>` : ""}
 </dl>
 </section>
 <section class="sec" aria-labelledby="yomi"><h2 id="yomi">「${esc(k.ch)}」の読みと使い方</h2>${readingRows}</section>
 <section class="sec prose" aria-labelledby="name"><h2 id="name">「${esc(k.ch)}」は名前に使える？</h2>
-<p><b>使えます。</b>「${esc(k.ch)}」は${TYPE[k.type]}なので、子どもの名前に使うことができます。${variant}</p>
+<p><b>使えます。</b>「${esc(k.ch)}」は${TYPE[k.type]}なので、子どもの名前に使うことができます。${parentNote || variant}</p>
+${IMI[k.ch] ? `<p>名前に使うときは「<b>${esc(IMI[k.ch][1].replace(/。$/, ""))}</b>」といった願いをこめることができます。</p>` : ""}
 <p>姓名判断では「${esc(k.ch)}」を<b>${k.strokes}画</b>として数えます（新字体）。${k.strokes}は「${esc(luck.keyword)}」の意味をもつ${luck.luck}数ですが、姓名判断は名前全体の画数（五格）で見るので、一字だけでよし悪しは決まりません。</p>
 <p><a class="btn" href="../../">「${esc(k.ch)}」を使った名前を姓名判断する</a></p>
 </section>
@@ -69,7 +74,7 @@ ${(phrases.get(k.ch) || []).length ? `<section class="sec" aria-labelledby="ph">
 ${sameYomi.length ? `<section class="sec" aria-labelledby="sy"><h2 id="sy">同じ読みの漢字</h2>${chips(sameYomi.slice(0, 40), up)}</section>` : ""}
 <section class="sec" aria-labelledby="ss"><h2 id="ss">同じ${k.strokes}画の漢字</h2>${chips(sameStroke.slice(0, 40), up)}${sameStroke.length > 40 ? `<p><a href="${up}kakusu/${k.strokes}/">${k.strokes}画の漢字をすべて見る（${sameStroke.length + 1}字）→</a></p>` : ""}</section>
 ${sameRad.length ? `<section class="sec" aria-labelledby="sr"><h2 id="sr">同じ部首（${esc(k.radCh)}）の漢字</h2>${chips(sameRad.slice(0, 40), up)}</section>` : ""}`;
-    write(`kanji/${k.ch}`, page({ path: `kanji/${k.ch}/`, title: `「${k.ch}」の読み方・画数・部首｜名前に使える？｜漢字辞典`, h1: `「${esc(k.ch)}」の漢字`, desc,
+    write(`kanji/${k.ch}`, page({ path: `kanji/${k.ch}/`, title: IMI[k.ch] ? `「${k.ch}」の意味・読み方・画数｜名前に使う願い｜漢字辞典` : `「${k.ch}」の読み方・画数・部首｜名前に使える？｜漢字辞典`, h1: `「${esc(k.ch)}」の漢字`, desc,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: `「${k.ch}」`, path: `kanji/${k.ch}/` }], body }));
     urls.push(`kanji/${k.ch}/`);
   }
