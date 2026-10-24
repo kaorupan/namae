@@ -7,6 +7,8 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildKanji } from "./kanji-pages.mjs";
 import { buildPhrases, phrasesByChar } from "./phrase-pages.mjs";
+import NAMES from "../data/names.mjs";
+import IMI from "../data/kanji-imi.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -40,7 +42,7 @@ function page({ path, title, desc, body, h1, crumbs = [], scripts = [], jsonld =
   const url = BASE + "/" + encodeURI(path);
   const bc = [{ name: "トップ", url: BASE + "/" }].concat(crumbs.map((c) => ({ name: c.name, url: BASE + "/" + c.path })));
   const ld = jsonld.concat(crumbs.length ? [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: bc.map((b, i) => ({ "@type": "ListItem", position: i + 1, name: b.name, item: encodeURI(b.url) })) }] : []);
-  const nav = [["", "姓名判断"], ["nazuke/", "名づけ"], ["kanji/", "漢字"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人"]];
+  const nav = [["", "姓名判断"], ["akachan/", "赤ちゃんの名前"], ["nazuke/", "候補くらべ"], ["kanji/", "漢字"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人"]];
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -74,7 +76,7 @@ ${crumbs.length ? `<nav class="crumb" aria-label="パンくず"><ol>${bc.map((b,
 ${body}
 </main>
 <footer class="ft"><div class="wrap">
-<ul><li><a href="${up}">姓名判断</a></li><li><a href="${up}nazuke/">名づけ候補くらべ</a></li><li><a href="${up}kanji/">漢字辞典</a></li><li><a href="${up}yoji/">四字熟語</a></li><li><a href="${up}kotowaza/">ことわざ</a></li><li><a href="${up}ijin/">偉人の名前</a></li><li><a href="${up}about/">このサイトについて</a></li><li><a href="${up}privacy/">プライバシーポリシー</a></li></ul>
+<ul><li><a href="${up}">姓名判断</a></li><li><a href="${up}akachan/">赤ちゃんの名前さがし</a></li><li><a href="${up}nazuke/">名づけ候補くらべ</a></li><li><a href="${up}kanji/">漢字辞典</a></li><li><a href="${up}yoji/">四字熟語</a></li><li><a href="${up}kotowaza/">ことわざ</a></li><li><a href="${up}ijin/">偉人の名前</a></li><li><a href="${up}about/">このサイトについて</a></li><li><a href="${up}privacy/">プライバシーポリシー</a></li></ul>
 <p>画数データの一部に、文字情報基盤（MJ文字情報一覧表、独立行政法人情報処理推進機構）を使っています（CC BY-SA 2.1 JP）。漢字の読みと例は文化庁「常用漢字表」、人名用漢字の一覧と読み・部首は Unicode Unihan Database（Unicode License v3）によります。</p>
 <p>&copy; ${esc(SITE)}</p>
 </div></footer>
@@ -198,6 +200,7 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 <section class="sec" aria-labelledby="d">
 <h2 id="d">漢字・四字熟語・ことわざを調べる</h2>
 <ul class="plist">
+<li><a href="akachan/"><b>赤ちゃんの名前さがし</b><span>名字を入れるだけで、評価のよい名前をずらっと表示します。</span></a></li>
 <li><a href="nazuke/"><b>名づけ候補くらべ</b><span>赤ちゃんの名前の候補をいくつでも入れて、評価の高い順にくらべられます。</span></a></li>
 <li><a href="kanji/"><b>漢字辞典</b><span>名前に使える漢字の読み方・画数・部首。画数別・読み別の一覧も。</span></a></li>
 <li><a href="yoji/"><b>四字熟語</b><span>よく使う四字熟語の意味と使い方を例文つきで。</span></a></li>
@@ -211,10 +214,79 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 </section>`;
   write("", page({ path: "", title: `姓名判断｜名前を💮◎〇△で評価・似ている偉人もわかる｜${SITE}`, h1: "名前の姓名判断",
     desc: "姓と名を入れるだけで、名前の画数から五格（天格・人格・地格・外格・総格）を出して、💮◎〇△の4段階で評価します。画数の型が似ている偉人もわかります。",
-    scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "app.js"],
+    scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "kanji-imi-data.js", "app.js"],
     jsonld: [{ "@context": "https://schema.org", "@type": "WebApplication", name: SITE + " 姓名判断", url: BASE + "/", applicationCategory: "LifestyleApplication", operatingSystem: "Any", offers: { "@type": "Offer", price: "0", priceCurrency: "JPY" } }],
     body }));
 }
+
+writeFileSync(join(ROOT, "assets/js/kanji-imi-data.js"), "/* 名づけ用の漢字の意味（data/kanji-imi.mjs から作る。手で直さない） */\n(self.Namae = self.Namae || {}).kanjiImi = " + JSON.stringify(IMI) + ";\n");
+// ---- 赤ちゃんの名前さがし ----
+writeFileSync(join(ROOT, "assets/js/names-data.js"), "/* 赤ちゃんの名前の候補（data/names.mjs から作る。手で直さない） */\n(self.Namae = self.Namae || {}).names = " + JSON.stringify(NAMES.map((n) => [n.mei, n.yomi, n.g])) + ";\n");
+write("akachan", page({ path: "akachan/", title: `赤ちゃんの名前さがし｜名字に合う名前を姓名判断で探す｜${SITE}`, h1: "赤ちゃんの名前さがし",
+  desc: `名字を入れるだけで、赤ちゃんの名前の候補を姓名判断の評価（💮◎〇△）がよい順に表示します。男の子・女の子、文字数、響き、好きな漢字でもしぼりこめます。`,
+  crumbs: [{ name: "赤ちゃんの名前さがし", path: "akachan/" }], scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "core.js", "names-data.js", "akachan.js"],
+  body: `<div class="hero">
+<svg class="hero-art" viewBox="0 0 160 120" aria-hidden="true">
+<circle cx="80" cy="64" r="48" fill="var(--pink-soft)"/>
+<circle cx="80" cy="62" r="26" fill="var(--paper)" stroke="var(--pink)" stroke-width="4"/>
+<circle cx="71" cy="60" r="3" fill="var(--ink)"/><circle cx="89" cy="60" r="3" fill="var(--ink)"/>
+<path d="M73 70q7 6 14 0" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+<circle cx="64" cy="68" r="4" fill="var(--pink)" opacity=".5"/><circle cx="96" cy="68" r="4" fill="var(--pink)" opacity=".5"/>
+<path d="M80 36q-6-10 4-12" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M24 26l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--lemon)"/><path d="M138 22l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="var(--mint)"/>
+<path d="M128 94c-6-6-14 2-6 8l6 5 6-5c8-6 0-14-6-8z" fill="var(--pink)"/>
+</svg>
+<p class="lead">名字を入れるだけで、${new Set(NAMES.map((n) => n.mei)).size}の名前から<b>姓名判断の評価がよい順</b>にずらっと表示します。気に入った名前は♥で候補に入れて、あとでくらべられます。</p>
+<ul class="hero-tags" aria-label="できること"><li>名字に合う名前</li><li>響き・漢字でしぼりこみ</li><li>♥で候補に保存</li></ul>
+</div>
+<section class="sec sec-form" aria-labelledby="af">
+<h2 id="af">条件を入れて名前をさがす</h2>
+<form id="ak-form" class="form ak-form" novalidate>
+<div class="field"><label for="ak-sei">名字（必須）</label><input id="ak-sei" name="sei" autocomplete="family-name" maxlength="6" placeholder="例：佐藤" required></div>
+<fieldset class="ak-g"><legend>性別</legend>
+<label><input type="radio" name="g" value="all" checked><span>指定なし</span></label>
+<label><input type="radio" name="g" value="m"><span>男の子</span></label>
+<label><input type="radio" name="g" value="f"><span>女の子</span></label>
+</fieldset>
+<div class="form-row">
+<div class="field"><label for="ak-min">評価</label><select id="ak-min" name="min"><option value="hana">💮だけ</option><option value="niju" selected>◎以上</option><option value="maru">〇以上</option><option value="all">すべて</option></select></div>
+<div class="field"><label for="ak-len">名前の文字数</label><select id="ak-len" name="len"><option value="">指定なし</option><option value="1">1文字</option><option value="2">2文字</option><option value="3">3文字以上</option></select></div>
+</div>
+<div class="form-row">
+<div class="field"><label for="ak-oto">響き（読みのはじめ）</label><input id="ak-oto" name="oto" maxlength="6" placeholder="例：はる" autocomplete="off"></div>
+<div class="field"><label for="ak-kanji">使いたい漢字</label><input id="ak-kanji" name="kanji" maxlength="2" placeholder="例：陽" autocomplete="off"></div>
+</div>
+<p id="ak-err" class="err" role="alert" hidden></p>
+<button class="btn btn-big" type="submit">✿ 名前をさがす</button>
+<p class="note">入力した内容は、この画面の中だけで計算します。どこにも送りません。</p>
+</form>
+</section>
+<section id="ak-result" class="sec" aria-labelledby="ak-title" hidden>
+<h2 id="ak-title" tabindex="-1">評価のよい名前</h2>
+<div id="ak-sum" class="ak-sum" aria-live="polite"></div>
+<ol id="ak-list" class="nz-list"></ol>
+<p class="ak-more-wrap"><button id="ak-more" class="btn" type="button" hidden>もっと見る</button></p>
+<p><a id="ak-mylist" class="ak-mylist" href="../nazuke/">♥ 名づけ候補くらべを見る →</a></p>
+<p class="note">名前をタップすると、五格のくわしい結果が見られます。ここにある読みは一例です。名前の読み方は、常識の範囲で自由に決められます。評価は画数から出した目安なので、響きや意味、家族の思いも大切にしてください。</p>
+</section>
+<section class="sec" aria-labelledby="ah">
+<h2 id="ah">名前のさがし方</h2>
+<ul class="plist ak-ways">
+<li><a href="../kanji/yomi/はる/"><b>🔤 音のひびきから</b><span>「はる」「ゆい」など、好きな響きの漢字を一覧で。</span></a></li>
+<li><a href="../kanji/"><b>✏️ 好きな漢字から</b><span>名前に使える漢字の意味・読み・画数を調べる。</span></a></li>
+<li><a href="../nazuke/"><b>♥ 候補をくらべる</b><span>気になる名前を並べて、評価の順にくらべる。</span></a></li>
+<li><a href="../"><b>💮 姓名判断</b><span>決めた名前の五格を、くわしく見る。</span></a></li>
+</ul>
+</section>
+<section class="sec prose" aria-labelledby="ak-tips">
+<h2 id="ak-tips">名づけのときに気をつけたいこと</h2>
+<ul class="ak-tips">
+<li><b>使える漢字</b>：子どもの名前には、常用漢字・人名用漢字・ひらがな・カタカナが使えます。</li>
+<li><b>呼びやすさ</b>：名字と続けて声に出してみて、言いやすいか、聞き取りやすいかを確かめましょう。</li>
+<li><b>読みやすさ</b>：初めて見た人にも読んでもらいやすいかどうかも、考えておくと安心です。</li>
+<li><b>出生届</b>：生まれた日をふくめて14日以内に出します（国外で生まれた場合は3か月以内）。</li>
+</ul>
+</section>` }));
 
 // ---- 名づけ候補くらべ ----
 write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤ちゃんの名前の候補を姓名判断でくらべる｜${SITE}`, h1: "名づけ候補くらべ",
@@ -306,7 +378,7 @@ const kanji = buildKanji({ ROOT, page, write, esc, people, L, phrases: phrasesBy
 const phrases = buildPhrases({ page, write, esc, kanjiSet: kanji.set });
 
 // ---- sitemap・robots ----
-const urls = ["", "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, "about/", "privacy/"];
+const urls = ["", "akachan/", "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, "about/", "privacy/"];
 writeFileSync(join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${BASE}/${encodeURI(u)}</loc></url>`).join("\n")}\n</urlset>\n`);
 writeFileSync(join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
 console.log("built", urls.length, "pages");

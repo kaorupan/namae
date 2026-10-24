@@ -22,6 +22,44 @@
     return e;
   }
 
+
+  var SVGNS = "http://www.w3.org/2000/svg";
+  function sv(tag, attrs, kids) {
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    (kids || []).forEach(function (c) { if (c) e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); });
+    return e;
+  }
+  var LUCKCOL = { "大吉": ["var(--pink)", "#fff"], "吉": ["var(--pink-soft)", "var(--pink-deep)"], "半吉": ["var(--lemon-soft)", "var(--ink)"], "凶": ["var(--soft)", "var(--muted)"] };
+  /** 五格の図：名前の字をたてに並べ、どの字を足した数かをかっこで示す */
+  function diagram(r) {
+    var chars = r.sei.map(function (c) { return { c: c, part: 0 }; }).concat(r.mei.map(function (c) { return { c: c, part: 1 }; }));
+    var RH = 56, TOP = 18, GAP = 16, W = 480, CX = 240;
+    var ys = chars.map(function (x, i) { return TOP + RH / 2 + i * RH + (x.part ? GAP : 0); });
+    var H = ys[ys.length - 1] + RH / 2 + TOP;
+    var kids = [sv("title", {}, ["五格の図"])];
+    chars.forEach(function (x, i) {
+      kids.push(sv("text", { x: CX, y: ys[i] + 12, "text-anchor": "middle", "font-size": 40, "font-weight": 700, fill: "var(--ink)", "font-family": "var(--kanji)" }, [x.c.ch]));
+      kids.push(sv("text", { x: CX + 30, y: ys[i] + 18, "font-size": 15, "font-weight": 700, fill: "var(--muted)" }, [String(x.c.strokes)]));
+    });
+    var ns = r.sei.length, last = chars.length - 1;
+    function bracket(a, b, x, dir, key, label) {
+      var y1 = ys[a] - 16, y2 = ys[b] + 16, t = 8 * dir;
+      kids.push(sv("path", { d: "M" + (x - t) + "," + y1 + "H" + x + "V" + y2 + "H" + (x - t), fill: "none", stroke: "var(--line)", "stroke-width": 3, "stroke-linecap": "round", "stroke-linejoin": "round" }));
+      var l = L.of(r[key].value), col = LUCKCOL[l.luck], w = 86, px = dir > 0 ? x + 6 : x - 6 - w, py = (y1 + y2) / 2 - 27;
+      kids.push(sv("line", { x1: x, y1: (y1 + y2) / 2, x2: dir > 0 ? px : px + w, y2: (y1 + y2) / 2, stroke: "var(--line)", "stroke-width": 3 }));
+      kids.push(sv("rect", { x: px, y: py, width: w, height: 54, rx: 16, fill: col[0], stroke: "var(--paper)", "stroke-width": 2 }));
+      kids.push(sv("text", { x: px + w / 2, y: py + 23, "text-anchor": "middle", "font-size": 16, "font-weight": 700, fill: col[1] }, [label + " " + r[key].value]));
+      kids.push(sv("text", { x: px + w / 2, y: py + 44, "text-anchor": "middle", "font-size": 16, "font-weight": 700, fill: col[1] }, [l.luck]));
+    }
+    bracket(0, ns - 1, 290, 1, "ten", "天格");
+    bracket(ns, last, 290, 1, "chi", "地格");
+    bracket(0, last, 390, 1, "sou", "総格");
+    bracket(ns - 1, ns, 190, -1, "jin", "人格");
+    bracket(0, last, 90, -1, "gai", "外格");
+    return sv("svg", { viewBox: "0 0 " + W + " " + H, class: "gokaku-svg", role: "img", "aria-label": "五格の図：天格" + r.ten.value + "、人格" + r.jin.value + "、地格" + r.chi.value + "、外格" + r.gai.value + "、総格" + r.sou.value }, kids);
+  }
+
   function render(box, sei, mei, r) {
     var rt = C.rate(r);
     box.textContent = "";
@@ -56,7 +94,22 @@
         el("span", { class: "stars", "aria-hidden": "true", text: stars }),
         el("small", { text: l.keyword }), el("span", { class: "role", text: ROLE[k] })]);
     }));
-    var s = r.sansai;
+    var s = r.sansai, IMI = N.kanjiImi || {};
+    var table = el("table", { class: "ktable ctable" }, [
+      el("thead", null, [el("tr", null, [el("th", { scope: "col", text: "字" }), el("th", { scope: "col", text: "画数" }), el("th", { scope: "col", text: "字の意味" })])]),
+      el("tbody", null, r.sei.concat(r.mei).map(function (c) {
+        var isK = /\p{Script=Han}/u.test(c.ch), imi = IMI[c.ch];
+        return el("tr", null, [el("th", { scope: "row" }, [isK ? el("a", { class: "kbig-s", href: "kanji/" + encodeURIComponent(c.ch) + "/", text: c.ch }) : el("span", { class: "kbig-s", text: c.ch })]),
+          el("td", { text: c.strokes + "画" }),
+          el("td", null, [imi ? imi[0] : isK ? el("a", { href: "kanji/" + encodeURIComponent(c.ch) + "/", text: "読み方・意味を見る" }) : "かな文字"])]);
+      }))
+    ]);
+    var secD = el("section", { class: "sec", "aria-labelledby": "zu-title" }, [
+      el("h2", { id: "zu-title", text: "五格の図" }),
+      el("div", { class: "gokaku" }, [diagram(r)]),
+      el("p", { class: "note", text: "右の数字が1字ずつの画数です。かっこでくくった字の画数を足したものが、それぞれの格になります（姓や名が1字のときは「霊数」として1を足します）。" }),
+      table
+    ]);
     var sec2 = el("section", { class: "sec", "aria-labelledby": "kaku-title" }, [
       el("h2", { id: "kaku-title", text: "五格の画数と意味" }), kaku,
       el("p", { class: "note", text: "三才配置（天・人・地の五行）：" + s.ten + "→" + s.jin + "→" + s.chi + "（天と人は" + s.tenJin.type + "、人と地は" + s.jinChi.type + "）" })
@@ -85,7 +138,15 @@
         copy
       ])
     ]);
-    [sec1, sec2, sec3, sec4].forEach(function (x) { box.appendChild(x); });
+    var sec5 = el("section", { class: "sec ak-promo", "aria-labelledby": "promo-title" }, [
+      el("h2", { id: "promo-title", text: "赤ちゃんの名前をさがしている方へ" }),
+      el("ul", { class: "plist ak-ways" }, [
+        el("li", null, [el("a", { href: "akachan/" }, [el("b", { text: "💮 名字に合う名前" }), el("span", { text: sei + "さんに合う、評価のよい名前をずらっと表示。" })])]),
+        el("li", null, [el("a", { href: "kanji/yomi/" + encodeURIComponent("はる") + "/" }, [el("b", { text: "🔤 響きからさがす" }), el("span", { text: "好きな読みの漢字を一覧で。" })])]),
+        el("li", null, [el("a", { href: "nazuke/" }, [el("b", { text: "♥ 候補をくらべる" }), el("span", { text: "気になる名前を並べてくらべる。" })])])
+      ])
+    ]);
+    [sec1, secD, sec2, sec3, sec4, sec5].forEach(function (x) { box.appendChild(x); });
     box.hidden = false;
     var h = document.getElementById("res-title");
     box.scrollIntoView({ behavior: "smooth", block: "start" });

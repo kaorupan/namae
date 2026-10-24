@@ -272,3 +272,39 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
   .nz-item.is-bad { grid-template-columns: minmax(0, 1fr) 40px; }
 }
 .field input::placeholder, .field textarea::placeholder { color: var(--muted); opacity: .55; font-weight: 500; }
+
+/* 赤ちゃんの名前さがし */
+.ak-g { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.ak-g legend { font-weight: 700; font-size: 14px; margin-bottom: 4px; padding: 0; float: left; width: 100%; }
+.ak-g label { flex: 1 1 90px; }
+.ak-g input { position: absolute; opacity: 0; }
+.ak-g span { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 999px; border: 2px solid var(--line); background: var(--soft); font-weight: 700; cursor: pointer; }
+.ak-g input:checked + span { background: var(--pink); border-color: var(--pink); color: #fff; }
+.ak-g label:nth-child(3) input:checked + span { background: var(--sky); border-color: var(--sky); }
+.ak-g input:focus-visible + span { outline: 3px solid var(--sky); outline-offset: 2px; }
+.field select { width: 100%; min-height: 52px; padding: 0 14px; font: 700 17px var(--round); color: var(--text); background: var(--soft); border: 2px solid var(--line); border-radius: 16px; }
+.field select:focus { border-color: var(--pink); outline: none; box-shadow: 0 0 0 4px var(--pink-soft); }
+.ak-sum { margin-bottom: 12px; }
+.ak-sum-main { margin: 0 0 6px; font-size: 17px; }
+.ak-sum-main b { font-size: 20px; color: var(--ink); }
+.ak-sum-main strong { font-size: 24px; color: var(--pink-deep); }
+.ak-sum-marks { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.ak-sum-marks li { font-weight: 700; font-size: 14px; padding: 2px 12px; border-radius: 999px; background: var(--lemon-soft); }
+.ak-sum-marks b { margin-right: 4px; color: var(--pink-deep); }
+.ak-item { grid-template-columns: 28px 52px minmax(0, 1fr) auto; }
+.ak-yomi { font-size: 13px; color: var(--muted); font-weight: 700; }
+.ak-more-wrap { text-align: center; margin: 16px 0 6px; }
+.ak-mylist { font-weight: 700; }
+.ak-ways b { font-size: 17px; }
+.ak-tips { padding-left: 1.2em; }
+.ak-tips li { margin-bottom: 6px; }
+@media (max-width: 480px) { .ak-item { grid-template-columns: 44px minmax(0, 1fr) 40px; } }
+
+/* 五格の図・字の表 */
+.gokaku { background: var(--soft); border-radius: 18px; padding: 8px 4px; margin-bottom: 8px; }
+.gokaku-svg { display: block; width: 100%; max-width: 480px; height: auto; margin: 0 auto; }
+.ctable { margin-top: 10px; }
+.ctable tbody th { width: 3.5em; text-align: center; }
+.ctable td:nth-child(2) { white-space: nowrap; font-weight: 700; width: 4em; }
+.ak-promo { background: linear-gradient(160deg, var(--mint-soft), var(--paper) 60%); border-color: var(--mint-soft); }
+#res-title:focus, #ak-title:focus { outline: none; }
