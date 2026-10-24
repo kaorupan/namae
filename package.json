@@ -1,0 +1,1 @@
+{"name":"namae","private":true,"type":"commonjs","scripts":{"build":"node tools/build.mjs","test":"node --test tests/*.test.js tests/*.test.mjs"},"devDependencies":{"@mandel59/mojidata":"^1.9.3","better-sqlite3":"^13.0.3"}}
