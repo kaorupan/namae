@@ -158,8 +158,21 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 {
   const pick = ["sakamoto-ryoma", "oda-nobunaga", "natsume-soseki", "noguchi-hideyo", "tokugawa-ieyasu", "sugawara-no-michizane", "miyazawa-kenji", "fukuzawa-yukichi"]
     .map((s) => people.find((p) => p.slug === s)).filter(Boolean);
-  const body = `<p class="lead">姓と名を入れるだけ。名前の画数から五格を出して、<b>💮◎〇△</b>の4段階で評価します。あなたの名前に似ている偉人も見つかります。</p>
-<section class="sec" aria-labelledby="f">
+  const body = `<div class="hero">
+<svg class="hero-art" viewBox="0 0 160 120" aria-hidden="true">
+<circle cx="80" cy="62" r="46" fill="var(--lemon-soft)"/>
+<rect x="44" y="34" width="72" height="56" rx="14" fill="var(--paper)" stroke="var(--pink)" stroke-width="4"/>
+<circle cx="80" cy="34" r="7" fill="var(--pink)"/>
+<text x="80" y="76" text-anchor="middle" font-size="30" font-weight="700" fill="var(--ink)" font-family="var(--kanji)">名前</text>
+<path d="M22 28l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--lemon)"/>
+<path d="M138 20l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="var(--mint)"/>
+<path d="M132 92l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="var(--pink)"/>
+<circle cx="24" cy="92" r="5" fill="var(--sky)"/><circle cx="146" cy="58" r="4" fill="var(--lemon)"/>
+</svg>
+<p class="lead">姓と名を入れるだけ！名前の画数から五格を出して、<b>💮◎〇△</b>の4段階で評価します。あなたの名前に似ている偉人も見つかるよ。</p>
+<ul class="hero-tags" aria-label="わかること"><li>💮◎〇△の評価</li><li>五格の意味</li><li>似ている偉人</li></ul>
+</div>
+<section class="sec sec-form" aria-labelledby="f">
 <h2 id="f">名前を入れてください</h2>
 <form id="name-form" class="form" novalidate>
 <div class="form-row">
@@ -167,7 +180,7 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 <div class="field"><label for="mei">名</label><input id="mei" name="mei" autocomplete="given-name" maxlength="10" placeholder="例：太郎" required></div>
 </div>
 <p id="name-err" class="err" role="alert" hidden></p>
-<button class="btn" type="submit">姓名判断をする</button>
+<button class="btn btn-big" type="submit">✿ 姓名判断をする</button>
 <p class="note">入力した名前は、この画面の中だけで計算します。どこにも送ったり保存したりしません。</p>
 </form>
 </section>

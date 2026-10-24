@@ -26,13 +26,23 @@
     var rt = C.rate(r);
     box.textContent = "";
     var full = sei + mei;
-    var sec1 = el("section", { class: "sec", "aria-labelledby": "res-title" }, [
+    var key = rt.mark.key;
+    var confetti = key === "hanamaru" || key === "nijuumaru"
+      ? el("div", { class: "confetti", "aria-hidden": "true" }, Array.from({ length: 14 }, function (_, i) { return el("i", { style: "--i:" + i }); })) : null;
+    var pct = Math.max(6, Math.min(100, Math.round(rt.score / 3 * 100)));
+    var sec1 = el("section", { class: "sec res-card res-" + key, "aria-labelledby": "res-title" }, [
+      confetti,
+      el("p", { class: "res-name" }, [el("span", { text: full }), "さんの名前"]),
       el("div", { class: "verdict" }, [
         el("div", { class: "seal", role: "img", "aria-label": "評価：" + rt.mark.label, text: rt.mark.mark }),
         el("div", null, [
-          el("h2", { id: "res-title", tabindex: "-1", text: full + "さんは「" + rt.mark.label + "」" }),
+          el("h2", { id: "res-title", tabindex: "-1", text: rt.mark.label + "！" }),
           el("p", { text: rt.mark.text })
         ])
+      ]),
+      el("div", { class: "meter", role: "img", "aria-label": "名前のよさ：3点満点で" + rt.score + "点" }, [
+        el("span", { class: "meter-bar" }, [el("span", { style: "width:" + pct + "%" })]),
+        el("span", { class: "meter-scale", "aria-hidden": "true" }, [el("span", { text: "△" }), el("span", { text: "〇" }), el("span", { text: "◎" }), el("span", { text: "💮" })])
       ]),
       el("div", { class: "chars", "aria-label": "名前の字と画数" },
         r.sei.map(function (c) { return el("div", { class: "char" }, [el("b", { text: c.ch }), el("span", { text: c.strokes + "画" })]); })
@@ -41,7 +51,9 @@
     ]);
     var kaku = el("ul", { class: "kaku" }, ["jin", "sou", "chi", "gai", "ten"].map(function (k) {
       var g = r[k], l = L.of(g.value);
-      return el("li", null, [el("b", { text: NAME[k] }), el("span", { class: "n", text: g.value + "画" }), el("span", { class: "luck l-" + l.luck, text: l.luck }),
+      var stars = { "大吉": "★★★", "吉": "★★☆", "半吉": "★☆☆", "凶": "☆☆☆" }[l.luck];
+      return el("li", { class: "k-" + k }, [el("b", { text: NAME[k] }), el("span", { class: "n", text: g.value + "画" }), el("span", { class: "luck l-" + l.luck, text: l.luck }),
+        el("span", { class: "stars", "aria-hidden": "true", text: stars }),
         el("small", { text: l.keyword }), el("span", { class: "role", text: ROLE[k] })]);
     }));
     var s = r.sansai;
