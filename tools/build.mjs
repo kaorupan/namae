@@ -40,7 +40,7 @@ function page({ path, title, desc, body, h1, crumbs = [], scripts = [], jsonld =
   const url = BASE + "/" + encodeURI(path);
   const bc = [{ name: "トップ", url: BASE + "/" }].concat(crumbs.map((c) => ({ name: c.name, url: BASE + "/" + c.path })));
   const ld = jsonld.concat(crumbs.length ? [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: bc.map((b, i) => ({ "@type": "ListItem", position: i + 1, name: b.name, item: encodeURI(b.url) })) }] : []);
-  const nav = [["", "姓名判断"], ["kanji/", "漢字"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人"]];
+  const nav = [["", "姓名判断"], ["nazuke/", "名づけ"], ["kanji/", "漢字"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人"]];
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -74,7 +74,7 @@ ${crumbs.length ? `<nav class="crumb" aria-label="パンくず"><ol>${bc.map((b,
 ${body}
 </main>
 <footer class="ft"><div class="wrap">
-<ul><li><a href="${up}">姓名判断</a></li><li><a href="${up}kanji/">漢字辞典</a></li><li><a href="${up}yoji/">四字熟語</a></li><li><a href="${up}kotowaza/">ことわざ</a></li><li><a href="${up}ijin/">偉人の名前</a></li><li><a href="${up}about/">このサイトについて</a></li><li><a href="${up}privacy/">プライバシーポリシー</a></li></ul>
+<ul><li><a href="${up}">姓名判断</a></li><li><a href="${up}nazuke/">名づけ候補くらべ</a></li><li><a href="${up}kanji/">漢字辞典</a></li><li><a href="${up}yoji/">四字熟語</a></li><li><a href="${up}kotowaza/">ことわざ</a></li><li><a href="${up}ijin/">偉人の名前</a></li><li><a href="${up}about/">このサイトについて</a></li><li><a href="${up}privacy/">プライバシーポリシー</a></li></ul>
 <p>画数データの一部に、文字情報基盤（MJ文字情報一覧表、独立行政法人情報処理推進機構）を使っています（CC BY-SA 2.1 JP）。漢字の読みと例は文化庁「常用漢字表」、人名用漢字の一覧と読み・部首は Unicode Unihan Database（Unicode License v3）によります。</p>
 <p>&copy; ${esc(SITE)}</p>
 </div></footer>
@@ -198,6 +198,7 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 <section class="sec" aria-labelledby="d">
 <h2 id="d">漢字・四字熟語・ことわざを調べる</h2>
 <ul class="plist">
+<li><a href="nazuke/"><b>名づけ候補くらべ</b><span>赤ちゃんの名前の候補をいくつでも入れて、評価の高い順にくらべられます。</span></a></li>
 <li><a href="kanji/"><b>漢字辞典</b><span>名前に使える漢字の読み方・画数・部首。画数別・読み別の一覧も。</span></a></li>
 <li><a href="yoji/"><b>四字熟語</b><span>よく使う四字熟語の意味と使い方を例文つきで。</span></a></li>
 <li><a href="kotowaza/"><b>ことわざ</b><span>よく使うことわざの意味と使い方を例文つきで。</span></a></li>
@@ -215,6 +216,66 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
     body }));
 }
 
+// ---- 名づけ候補くらべ ----
+write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤ちゃんの名前の候補を姓名判断でくらべる｜${SITE}`, h1: "名づけ候補くらべ",
+  desc: "赤ちゃんの名前の候補をいくつでも入れて、姓名判断の評価（💮◎〇△）と五格でくらべられます。候補はお使いの端末にだけ保存され、どこにも送りません。",
+  crumbs: [{ name: "名づけ候補くらべ", path: "nazuke/" }], scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "nazuke.js"],
+  body: `<div class="hero">
+<svg class="hero-art" viewBox="0 0 160 120" aria-hidden="true">
+<circle cx="80" cy="64" r="46" fill="var(--mint-soft)"/>
+<rect x="38" y="40" width="50" height="40" rx="10" fill="var(--paper)" stroke="var(--mint)" stroke-width="4" transform="rotate(-8 63 60)"/>
+<rect x="72" y="44" width="50" height="40" rx="10" fill="var(--paper)" stroke="var(--pink)" stroke-width="4" transform="rotate(7 97 64)"/>
+<text x="97" y="72" text-anchor="middle" font-size="20" fill="var(--pink-deep)" font-weight="700" transform="rotate(7 97 64)">💮</text>
+<text x="63" y="68" text-anchor="middle" font-size="20" fill="var(--mint)" font-weight="700" transform="rotate(-8 63 60)">◎</text>
+<path d="M24 26l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--lemon)"/><path d="M140 96l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="var(--sky)"/>
+</svg>
+<p class="lead">赤ちゃんの名前の候補を、いくつでも入れてくらべられます。姓名判断の評価（<b>💮◎〇△</b>）が高い順に並ぶので、迷ったときのヒントに。</p>
+<ul class="hero-tags" aria-label="できること"><li>候補は${60}件まで</li><li>♥でお気に入り</li><li>この端末にだけ保存</li></ul>
+</div>
+<section class="sec sec-form" aria-labelledby="nf">
+<h2 id="nf">名前の候補を入れる</h2>
+<form id="nz-form" class="form" novalidate>
+<div class="form-row">
+<div class="field"><label for="nz-sei">姓（名字）</label><input id="nz-sei" autocomplete="family-name" maxlength="6" placeholder="例：佐藤"></div>
+<div class="field"><label for="nz-mei">名前の候補</label><input id="nz-mei" maxlength="40" placeholder="例：陽翔" autocomplete="off"></div>
+</div>
+<p id="nz-err" class="err" role="alert" hidden></p>
+<button class="btn btn-big" type="submit">＋ 候補に追加</button>
+</form>
+<details class="nz-bulk">
+<summary>まとめて入れる</summary>
+<form id="nz-bulk-form" class="form" novalidate>
+<div class="field"><label for="nz-bulk">候補を改行・スペース・読点（、）で区切って入れてください</label>
+<textarea id="nz-bulk" rows="4" placeholder="陽翔&#10;蓮、湊、結菜&#10;さくら"></textarea></div>
+<p id="nz-bulk-err" class="err" role="alert" hidden></p>
+<button class="btn" type="submit">まとめて追加</button>
+</form>
+</details>
+<p class="note">入れた名前は、この端末のブラウザの中だけに保存します。どこにも送りません。</p>
+</section>
+<section class="sec" aria-labelledby="nl">
+<h2 id="nl">候補の一覧</h2>
+<div id="nz-tools" class="nz-tools" hidden>
+<p id="nz-count" class="nz-count" aria-live="polite"></p>
+<fieldset class="nz-sort"><legend>ならべ方</legend>
+<label><input type="radio" name="nz-sort" value="score"> 評価順</label>
+<label><input type="radio" name="nz-sort" value="added"> 入れた順</label>
+<label><input type="radio" name="nz-sort" value="fav"> ♥が先</label>
+</fieldset>
+</div>
+<ol id="nz-list" class="nz-list" aria-live="polite"></ol>
+<p><button id="nz-clear" class="nz-clear" type="button">候補を全部消す</button></p>
+<p class="note">名前をタップすると、くわしい五格と似ている偉人が見られます。評価は画数から出した目安です。響きや意味、家族の思いも大切にして選んでください。</p>
+</section>
+<section class="sec" aria-labelledby="nk">
+<h2 id="nk">名前に使う漢字をさがす</h2>
+<ul class="plist">
+<li><a href="../kanji/"><b>漢字辞典</b><span>名前に使える漢字の読み方・画数・意味</span></a></li>
+<li><a href="../kanji/yomi/はる/"><b>「はる」と読む漢字</b><span>読みから漢字をさがす</span></a></li>
+<li><a href="../ijin/"><b>偉人の名前</b><span>歴史上の人物の姓名判断</span></a></li>
+</ul>
+</section>` }));
+
 // ---- このサイトについて・プライバシー ----
 write("about", page({ path: "about/", title: `このサイトについて｜${SITE}`, desc: `${SITE}の姓名判断の計算方法と、使っているデータについて。`, crumbs: [{ name: "このサイトについて", path: "about/" }],
   body: `<section class="sec prose"><h2>${esc(SITE)}とは</h2>
@@ -231,6 +292,7 @@ write("privacy", page({ path: "privacy/", title: `プライバシーポリシー
   body: `<section class="sec prose">
 <h2>入力した名前について</h2>
 <p>姓名判断で入力した名前は、お使いの端末の中だけで計算します。サーバーに送ったり、保存したりしません。結果のリンクには名前がふくまれるので、シェアするときはご注意ください。</p>
+<p>「名づけ候補くらべ」に入れた姓と名前の候補は、あとで見返せるように、お使いの端末のブラウザ（ローカルストレージ）にだけ保存します。サーバーには送りません。「候補を全部消す」ボタンや、ブラウザのサイトデータの削除で消すことができます。</p>
 <h2>アクセス解析について</h2>
 <p>サイトの改善のため、Googleアナリティクスを使う場合があります。Cookieを使って、個人を特定しない形でアクセス情報を集めます。入力した名前は送りません。</p>
 <h2>広告について</h2>
@@ -244,7 +306,7 @@ const kanji = buildKanji({ ROOT, page, write, esc, people, L, phrases: phrasesBy
 const phrases = buildPhrases({ page, write, esc, kanjiSet: kanji.set });
 
 // ---- sitemap・robots ----
-const urls = ["", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, "about/", "privacy/"];
+const urls = ["", "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, "about/", "privacy/"];
 writeFileSync(join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${BASE}/${encodeURI(u)}</loc></url>`).join("\n")}\n</urlset>\n`);
 writeFileSync(join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
 console.log("built", urls.length, "pages");

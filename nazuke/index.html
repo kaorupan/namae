@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>名づけ候補くらべ｜赤ちゃんの名前の候補を姓名判断でくらべる｜なまえ帖</title>
+<meta name="description" content="赤ちゃんの名前の候補をいくつでも入れて、姓名判断の評価（💮◎〇△）と五格でくらべられます。候補はお使いの端末にだけ保存され、どこにも送りません。">
+<link rel="canonical" href="https://example.com/nazuke/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="名づけ候補くらべ｜赤ちゃんの名前の候補を姓名判断でくらべる｜なまえ帖">
+<meta property="og:description" content="赤ちゃんの名前の候補をいくつでも入れて、姓名判断の評価（💮◎〇△）と五格でくらべられます。候補はお使いの端末にだけ保存され、どこにも送りません。">
+<meta property="og:url" content="https://example.com/nazuke/">
+<meta property="og:site_name" content="なまえ帖">
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#ff7aa2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"トップ","item":"https://example.com/"},{"@type":"ListItem","position":2,"name":"名づけ候補くらべ","item":"https://example.com/nazuke/"}]}</script>
+</head>
+<body>
+<a class="skip" href="#main">本文へ</a>
+<header class="hd"><div class="wrap">
+<a class="logo" href="../"><span>名</span>なまえ帖</a>
+<nav class="nav" aria-label="メニュー"><a href="../">姓名判断</a><a href="../nazuke/" aria-current="page">名づけ</a><a href="../kanji/">漢字</a><a href="../yoji/">四字熟語</a><a href="../kotowaza/">ことわざ</a><a href="../ijin/">偉人</a></nav>
+</div></header>
+<main id="main" class="wrap">
+<nav class="crumb" aria-label="パンくず"><ol><li><a href="../">トップ</a></li><li aria-current="page">名づけ候補くらべ</li></ol></nav>
+<h1>名づけ候補くらべ</h1>
+<div class="hero">
+<svg class="hero-art" viewBox="0 0 160 120" aria-hidden="true">
+<circle cx="80" cy="64" r="46" fill="var(--mint-soft)"/>
+<rect x="38" y="40" width="50" height="40" rx="10" fill="var(--paper)" stroke="var(--mint)" stroke-width="4" transform="rotate(-8 63 60)"/>
+<rect x="72" y="44" width="50" height="40" rx="10" fill="var(--paper)" stroke="var(--pink)" stroke-width="4" transform="rotate(7 97 64)"/>
+<text x="97" y="72" text-anchor="middle" font-size="20" fill="var(--pink-deep)" font-weight="700" transform="rotate(7 97 64)">💮</text>
+<text x="63" y="68" text-anchor="middle" font-size="20" fill="var(--mint)" font-weight="700" transform="rotate(-8 63 60)">◎</text>
+<path d="M24 26l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--lemon)"/><path d="M140 96l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="var(--sky)"/>
+</svg>
+<p class="lead">赤ちゃんの名前の候補を、いくつでも入れてくらべられます。姓名判断の評価（<b>💮◎〇△</b>）が高い順に並ぶので、迷ったときのヒントに。</p>
+<ul class="hero-tags" aria-label="できること"><li>候補は60件まで</li><li>♥でお気に入り</li><li>この端末にだけ保存</li></ul>
+</div>
+<section class="sec sec-form" aria-labelledby="nf">
+<h2 id="nf">名前の候補を入れる</h2>
+<form id="nz-form" class="form" novalidate>
+<div class="form-row">
+<div class="field"><label for="nz-sei">姓（名字）</label><input id="nz-sei" autocomplete="family-name" maxlength="6" placeholder="例：佐藤"></div>
+<div class="field"><label for="nz-mei">名前の候補</label><input id="nz-mei" maxlength="40" placeholder="例：陽翔" autocomplete="off"></div>
+</div>
+<p id="nz-err" class="err" role="alert" hidden></p>
+<button class="btn btn-big" type="submit">＋ 候補に追加</button>
+</form>
+<details class="nz-bulk">
+<summary>まとめて入れる</summary>
+<form id="nz-bulk-form" class="form" novalidate>
+<div class="field"><label for="nz-bulk">候補を改行・スペース・読点（、）で区切って入れてください</label>
+<textarea id="nz-bulk" rows="4" placeholder="陽翔&#10;蓮、湊、結菜&#10;さくら"></textarea></div>
+<p id="nz-bulk-err" class="err" role="alert" hidden></p>
+<button class="btn" type="submit">まとめて追加</button>
+</form>
+</details>
+<p class="note">入れた名前は、この端末のブラウザの中だけに保存します。どこにも送りません。</p>
+</section>
+<section class="sec" aria-labelledby="nl">
+<h2 id="nl">候補の一覧</h2>
+<div id="nz-tools" class="nz-tools" hidden>
+<p id="nz-count" class="nz-count" aria-live="polite"></p>
+<fieldset class="nz-sort"><legend>ならべ方</legend>
+<label><input type="radio" name="nz-sort" value="score"> 評価順</label>
+<label><input type="radio" name="nz-sort" value="added"> 入れた順</label>
+<label><input type="radio" name="nz-sort" value="fav"> ♥が先</label>
+</fieldset>
+</div>
+<ol id="nz-list" class="nz-list" aria-live="polite"></ol>
+<p><button id="nz-clear" class="nz-clear" type="button">候補を全部消す</button></p>
+<p class="note">名前をタップすると、くわしい五格と似ている偉人が見られます。評価は画数から出した目安です。響きや意味、家族の思いも大切にして選んでください。</p>
+</section>
+<section class="sec" aria-labelledby="nk">
+<h2 id="nk">名前に使う漢字をさがす</h2>
+<ul class="plist">
+<li><a href="../kanji/"><b>漢字辞典</b><span>名前に使える漢字の読み方・画数・意味</span></a></li>
+<li><a href="../kanji/yomi/はる/"><b>「はる」と読む漢字</b><span>読みから漢字をさがす</span></a></li>
+<li><a href="../ijin/"><b>偉人の名前</b><span>歴史上の人物の姓名判断</span></a></li>
+</ul>
+</section>
+</main>
+<footer class="ft"><div class="wrap">
+<ul><li><a href="../">姓名判断</a></li><li><a href="../nazuke/">名づけ候補くらべ</a></li><li><a href="../kanji/">漢字辞典</a></li><li><a href="../yoji/">四字熟語</a></li><li><a href="../kotowaza/">ことわざ</a></li><li><a href="../ijin/">偉人の名前</a></li><li><a href="../about/">このサイトについて</a></li><li><a href="../privacy/">プライバシーポリシー</a></li></ul>
+<p>画数データの一部に、文字情報基盤（MJ文字情報一覧表、独立行政法人情報処理推進機構）を使っています（CC BY-SA 2.1 JP）。漢字の読みと例は文化庁「常用漢字表」、人名用漢字の一覧と読み・部首は Unicode Unihan Database（Unicode License v3）によります。</p>
+<p>&copy; なまえ帖</p>
+</div></footer>
+<script src="../assets/js/seimei-strokes.js" defer></script>
+<script src="../assets/js/seimei.js" defer></script>
+<script src="../assets/js/luck.js" defer></script>
+<script src="../assets/js/ijin.js" defer></script>
+<script src="../assets/js/core.js" defer></script>
+<script src="../assets/js/nazuke.js" defer></script>
+</body>
+</html>

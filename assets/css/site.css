@@ -222,3 +222,53 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
 @keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0); } 100% { opacity: 0; transform: translateY(260px) rotate(320deg); } }
 @keyframes float { 50% { transform: translateY(-6px); } }
 @media (prefers-reduced-motion: reduce) { .hero-art, .res-card, .res-card .seal, .meter-bar span { animation: none; } .confetti { display: none; } }
+
+/* 名づけ候補くらべ */
+.nz-bulk { margin-top: 14px; border-radius: 16px; background: var(--soft); padding: 10px 14px; }
+.nz-bulk summary { cursor: pointer; font-weight: 700; color: var(--pink-deep); min-height: 32px; display: flex; align-items: center; }
+.nz-bulk .form { margin-top: 8px; }
+.field textarea { width: 100%; padding: 12px 16px; font: 700 18px/1.7 var(--round); color: var(--text); background: var(--paper); border: 2px solid var(--line); border-radius: 16px; resize: vertical; }
+.field textarea:focus { border-color: var(--pink); outline: none; box-shadow: 0 0 0 4px var(--pink-soft); }
+.nz-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+.nz-count { margin: 0; font-weight: 700; color: var(--ink); }
+.nz-sort { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.nz-sort legend { position: absolute; left: -999px; }
+.nz-sort label { display: inline-flex; align-items: center; gap: 4px; font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 999px; background: var(--soft); cursor: pointer; min-height: 36px; }
+.nz-sort label:has(input:checked) { background: var(--pink); color: #fff; }
+.nz-sort input { position: absolute; opacity: 0; }
+.nz-sort label:focus-within { outline: 3px solid var(--sky); outline-offset: 2px; }
+.nz-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.nz-empty { color: var(--muted); text-align: center; padding: 18px; background: var(--soft); border-radius: 16px; margin: 0; }
+.nz-item { display: grid; grid-template-columns: 28px 52px minmax(0, 1fr) auto auto; gap: 4px 10px; align-items: center; padding: 12px 12px 12px 10px; border-radius: 18px; border: 2px solid var(--line); background: var(--paper); animation: pop .35s ease-out both; }
+.nz-item.res-hanamaru { border-color: var(--pink); background: linear-gradient(120deg, var(--pink-soft), var(--paper) 60%); }
+.nz-item.res-nijuumaru { border-color: var(--lemon); background: linear-gradient(120deg, var(--lemon-soft), var(--paper) 60%); }
+.nz-item.res-maru { border-color: var(--mint-soft); }
+.nz-item.is-bad { grid-template-columns: 28px minmax(0, 1fr) auto auto; background: var(--soft); }
+.nz-rank { font-weight: 700; color: var(--muted); text-align: center; font-size: 15px; }
+.nz-item:nth-child(1) .nz-rank:not(:empty) { color: #fff; background: var(--pink); border-radius: 50%; width: 26px; height: 26px; line-height: 26px; font-size: 14px; }
+.nz-mark { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: var(--lemon-soft); border: 3px dashed var(--lemon); font: 700 26px/1 var(--round); color: var(--pink-deep); transform: rotate(-8deg); }
+.nz-body { min-width: 0; display: grid; gap: 2px; }
+.nz-name { font: 700 22px/1.3 var(--kanji); color: var(--ink); text-decoration: none; }
+.nz-name:hover { color: var(--pink-deep); }
+.nz-sei { font-size: 15px; color: var(--muted); margin-right: 4px; }
+.nz-label { font-size: 13px; font-weight: 700; color: var(--pink-deep); }
+.nz-gs { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+.nz-g { font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--soft); color: var(--muted); }
+.nz-g em { font-style: normal; margin-left: 4px; }
+.nz-g.l-大吉 { background: var(--pink); color: #fff; } .nz-g.l-吉 { background: var(--pink-soft); color: var(--pink-deep); } .nz-g.l-半吉 { background: var(--lemon-soft); color: var(--ink); }
+.nz-sim { font-size: 12px; color: var(--mint); font-weight: 700; }
+.nz-fav, .nz-del { width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--soft); font-size: 20px; cursor: pointer; color: var(--muted); }
+.nz-fav.is-on { background: var(--pink-soft); color: var(--pink-deep); }
+.nz-del { font-size: 18px; }
+.nz-del:hover { background: var(--pink); color: #fff; }
+.nz-clear { border: 2px solid var(--line); background: var(--paper); color: var(--muted); border-radius: 999px; padding: 8px 18px; font: 700 14px var(--round); cursor: pointer; min-height: 44px; }
+.nz-clear[data-armed] { border-color: var(--pink); color: var(--pink-deep); }
+@media (max-width: 480px) {
+  .nz-item { grid-template-columns: 44px minmax(0, 1fr) 40px; grid-template-rows: auto auto; padding: 12px; }
+  .nz-rank { display: none; }
+  .nz-mark { width: 44px; height: 44px; font-size: 22px; grid-row: 1 / 3; }
+  .nz-body { grid-row: 1 / 3; }
+  .nz-fav, .nz-del { width: 40px; height: 40px; grid-column: 3; }
+  .nz-item.is-bad { grid-template-columns: minmax(0, 1fr) 40px; }
+}
+.field input::placeholder, .field textarea::placeholder { color: var(--muted); opacity: .55; font-weight: 500; }
