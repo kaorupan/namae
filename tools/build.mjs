@@ -55,7 +55,10 @@ function page({ path, title, desc, body, h1, crumbs = [], scripts = [], jsonld =
 <meta property="og:url" content="${esc(url)}">
 <meta property="og:site_name" content="${esc(SITE)}">
 <meta name="twitter:card" content="summary">
-<meta name="theme-color" content="#1b2a4a">
+<meta name="theme-color" content="#ff7aa2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap">
 <link rel="stylesheet" href="${up}assets/css/site.css">
 ${ld.map((x) => `<script type="application/ld+json">${JSON.stringify(x)}</script>`).join("\n")}
 </head>
