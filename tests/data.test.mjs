@@ -19,3 +19,8 @@ for (const [name, list] of [["四字熟語", yoji], ["ことわざ", koto]]) tes
     assert.ok(m.length > 8 && ex.includes(w.slice(0, 2)), w);
   }
 });
+import yurai from "../data/yurai.mjs";
+test("由来は、載せている四字熟語・ことわざのものだけ", () => {
+  const all = new Set([...yoji, ...koto].map((r) => r[0]));
+  for (const k of Object.keys(yurai)) assert.ok(all.has(k), "由来の言葉がない: " + k);
+});

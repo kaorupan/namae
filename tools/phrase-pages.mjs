@@ -1,6 +1,7 @@
 // 四字熟語・ことわざのページ：yoji/・yoji/<熟語>/・kotowaza/・kotowaza/<ことわざ>/
 import yojiData from "../data/yoji.mjs";
 import kotoData from "../data/kotowaza.mjs";
+import YURAI from "../data/yurai.mjs";
 
 const GYO = [["あ", "あいうえお"], ["か", "かきくけこがぎぐげご"], ["さ", "さしすせそざじずぜぞ"], ["た", "たちつてとだぢづでど"], ["な", "なにぬねの"], ["は", "はひふへほばびぶべぼぱぴぷぺぽ"], ["ま", "まみむめも"], ["や", "やゆよ"], ["ら", "らりるれろ"], ["わ", "わを"]];
 const gyoOf = (r) => (GYO.find(([, cs]) => cs.includes(r[0])) || ["他"])[0];
@@ -25,15 +26,16 @@ export function buildPhrases({ page, write, esc, kanjiSet }) {
     list.forEach((x, i) => {
       const chars = [...new Set(Array.from(x.w).filter((c) => kanjiSet.has(c)))];
       const near = [1, 2, 3, 4, -1, -2, -3, -4].map((d) => list[(i + d + list.length) % list.length]).filter((v, j, a) => v !== x && a.indexOf(v) === j);
-      const desc = `「${x.w}」（${x.y}）の意味は「${x.mean.replace(/。$/, "")}」。使い方の例文${x.rel ? "と似た意味の言葉" : ""}、使われている漢字も紹介します。`;
+      const desc = `「${x.w}」（${x.y}）の意味は「${x.mean.replace(/。$/, "")}」。${YURAI[x.w] ? "由来と" : ""}使い方の例文${x.rel ? "、似た意味の言葉" : ""}、使われている漢字も紹介します。`;
       const body = `<p class="yomi">${esc(x.y)}</p>
 <section class="sec prose" aria-labelledby="m"><h2 id="m">「${esc(x.w)}」の意味</h2><p class="pmean">${esc(x.mean)}</p></section>
+${YURAI[x.w] ? `<section class="sec prose" aria-labelledby="o2"><h2 id="o2">「${esc(x.w)}」の由来</h2><p class="porigin">${esc(YURAI[x.w])}</p></section>` : ""}
 <section class="sec prose" aria-labelledby="e"><h2 id="e">使い方・例文</h2><p class="pex">${esc(x.ex)}</p></section>
 ${x.rel ? `<section class="sec prose" aria-labelledby="r"><h2 id="r">似た意味の${kind.name}</h2><p>${names.has(x.rel) ? `<a href="../${x.rel}/">${esc(x.rel)}</a>` : esc(x.rel)}</p></section>` : ""}
 ${chars.length ? `<section class="sec" aria-labelledby="k"><h2 id="k">使われている漢字</h2><ul class="kchips">${chars.map((c) => `<li><a href="../../kanji/${c}/">${esc(c)}</a></li>`).join("")}</ul><p class="note">字をえらぶと、読み方・画数・名前に使えるかがわかります。</p></section>` : ""}
 <section class="sec" aria-labelledby="o"><h2 id="o">ほかの${kind.name}</h2><ul class="plist">${near.map((n) => `<li><a href="../${n.w}/"><b>${esc(n.w)}</b><small>${esc(n.y)}</small></a></li>`).join("")}</ul>
 <p><a href="../">${kind.name}の一覧（${list.length}）→</a></p></section>`;
-      write(`${kind.dir}/${x.w}`, page({ path: `${kind.dir}/${x.w}/`, title: `「${x.w}」の意味・読み方・使い方｜${kind.name}`, h1: `${esc(x.w)}`, desc,
+      write(`${kind.dir}/${x.w}`, page({ path: `${kind.dir}/${x.w}/`, title: YURAI[x.w] ? `「${x.w}」の意味・由来・使い方｜${kind.name}` : `「${x.w}」の意味・読み方・使い方｜${kind.name}`, h1: `${esc(x.w)}`, desc,
         crumbs: [{ name: kind.name, path: `${kind.dir}/` }, { name: x.w, path: `${kind.dir}/${x.w}/` }], body }));
       urls.push(`${kind.dir}/${x.w}/`);
     });
