@@ -9,6 +9,7 @@ import { buildKanji } from "./kanji-pages.mjs";
 import { buildPhrases, phrasesByChar } from "./phrase-pages.mjs";
 import NAMES from "../data/names.mjs";
 import IMI from "../data/kanji-imi.mjs";
+import { buildAkachanYomi } from "./akachan-pages.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -212,7 +213,7 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 <p>姓名判断では、名前の文字の画数から「五格」とよばれる5つの数を出します。姓の合計が天格、姓の最後と名の最初の字の合計が人格、名の合計が地格、全部の合計が総格、総格から人格を引いた数が外格です。</p>
 <p>それぞれの数には吉凶とキーワードがあり、とくに人格（性格の中心）と総格（人生全体）が大切だと考えられています。このサイトでは画数を新字体で数えています。旧字体で数える流派では、結果が変わることがあります。</p>
 </section>`;
-  write("", page({ path: "", title: `姓名判断｜名前を💮◎〇△で評価・似ている偉人もわかる｜${SITE}`, h1: "名前の姓名判断",
+  write("", page({ path: "", title: `姓名判断｜名前を💮◎〇△で無料診断・赤ちゃんの名づけにも｜${SITE}`, h1: "名前の姓名判断",
     desc: "姓と名を入れるだけで、名前の画数から五格（天格・人格・地格・外格・総格）を出して、💮◎〇△の4段階で評価します。画数の型が似ている偉人もわかります。",
     scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "kanji-imi-data.js", "app.js"],
     jsonld: [{ "@context": "https://schema.org", "@type": "WebApplication", name: SITE + " 姓名判断", url: BASE + "/", applicationCategory: "LifestyleApplication", operatingSystem: "Any", offers: { "@type": "Offer", price: "0", priceCurrency: "JPY" } }],
@@ -221,9 +222,10 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 
 writeFileSync(join(ROOT, "assets/js/kanji-imi-data.js"), "/* 名づけ用の漢字の意味（data/kanji-imi.mjs から作る。手で直さない） */\n(self.Namae = self.Namae || {}).kanjiImi = " + JSON.stringify(IMI) + ";\n");
 // ---- 赤ちゃんの名前さがし ----
+const akYomi = buildAkachanYomi({ page, write, esc, S, IMI, NAMES, kanjiSet: new Set(JSON.parse(readFileSync(join(ROOT, "data/kanji.json"), "utf8")).map((k) => k.ch)) });
 writeFileSync(join(ROOT, "assets/js/names-data.js"), "/* 赤ちゃんの名前の候補（data/names.mjs から作る。手で直さない） */\n(self.Namae = self.Namae || {}).names = " + JSON.stringify(NAMES.map((n) => [n.mei, n.yomi, n.g])) + ";\n");
-write("akachan", page({ path: "akachan/", title: `赤ちゃんの名前さがし｜名字に合う名前を姓名判断で探す｜${SITE}`, h1: "赤ちゃんの名前さがし",
-  desc: `名字を入れるだけで、赤ちゃんの名前の候補を姓名判断の評価（💮◎〇△）がよい順に表示します。男の子・女の子、文字数、響き、好きな漢字でもしぼりこめます。`,
+write("akachan", page({ path: "akachan/", title: `赤ちゃんの姓名判断・名前さがし｜名字に合う名前を無料で｜${SITE}`, h1: "赤ちゃんの姓名判断・名前さがし",
+  desc: `赤ちゃんの名づけに。名字を入れるだけで、名前の候補を姓名判断の評価（💮◎〇△）がよい順に表示します。男の子・女の子、文字数、響き、好きな漢字でしぼりこめて、読みから漢字もさがせます。`,
   crumbs: [{ name: "赤ちゃんの名前さがし", path: "akachan/" }], scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "core.js", "names-data.js", "akachan.js"],
   body: `<div class="hero">
 <svg class="hero-art" viewBox="0 0 160 120" aria-hidden="true">
@@ -269,6 +271,7 @@ write("akachan", page({ path: "akachan/", title: `赤ちゃんの名前さがし
 <p><a id="ak-mylist" class="ak-mylist" href="../nazuke/">♥ 名づけ候補くらべを見る →</a></p>
 <p class="note">名前をタップすると、五格のくわしい結果が見られます。ここにある読みは一例です。名前の読み方は、常識の範囲で自由に決められます。評価は画数から出した目安なので、響きや意味、家族の思いも大切にしてください。</p>
 </section>
+${akYomi.indexHtml}
 <section class="sec" aria-labelledby="ah">
 <h2 id="ah">名前のさがし方</h2>
 <ul class="plist ak-ways">
@@ -378,7 +381,7 @@ const kanji = buildKanji({ ROOT, page, write, esc, people, L, phrases: phrasesBy
 const phrases = buildPhrases({ page, write, esc, kanjiSet: kanji.set });
 
 // ---- sitemap・robots ----
-const urls = ["", "akachan/", "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, "about/", "privacy/"];
+const urls = ["", "akachan/", ...akYomi.urls, "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, "about/", "privacy/"];
 writeFileSync(join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${BASE}/${encodeURI(u)}</loc></url>`).join("\n")}\n</urlset>\n`);
 writeFileSync(join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
 console.log("built", urls.length, "pages");

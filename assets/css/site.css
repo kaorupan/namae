@@ -308,3 +308,17 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
 .ctable td:nth-child(2) { white-space: nowrap; font-weight: 700; width: 4em; }
 .ak-promo { background: linear-gradient(160deg, var(--mint-soft), var(--paper) 60%); border-color: var(--mint-soft); }
 #res-title:focus, #ak-title:focus { outline: none; }
+
+/* 読みごとの名前ページ */
+.yn-form { grid-template-columns: minmax(0, 1fr) auto; align-items: end; }
+.yn-form .btn { min-height: 56px; }
+.yn-wrap { overflow-x: auto; }
+.yn-table { min-width: 560px; }
+.yn-name { font: 700 24px var(--kanji); color: var(--ink); }
+.yn-chars a, .yn-chars { font: 700 18px var(--kanji); text-decoration: none; }
+.yn-chars small { font: 700 11px var(--round); color: var(--muted); margin: 0 6px 0 1px; }
+.yn-table td { vertical-align: middle; }
+.yn-imi { font-size: 13px; color: var(--muted); min-width: 12em; }
+.yn-badge { display: inline-block; white-space: nowrap; font-weight: 700; font-size: 13px; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--ink); text-decoration: none; }
+.yn-badge.res-hanamaru { background: var(--pink); color: #fff; } .yn-badge.res-nijuumaru { background: var(--lemon); color: var(--ink); } .yn-badge.res-maru { background: var(--mint-soft); }
+@media (max-width: 480px) { .yn-form { grid-template-columns: 1fr; } }
