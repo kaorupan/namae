@@ -322,3 +322,13 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
 .yn-badge { display: inline-block; white-space: nowrap; font-weight: 700; font-size: 13px; padding: 2px 10px; border-radius: 999px; background: var(--soft); color: var(--ink); text-decoration: none; }
 .yn-badge.res-hanamaru { background: var(--pink); color: #fff; } .yn-badge.res-nijuumaru { background: var(--lemon); color: var(--ink); } .yn-badge.res-maru { background: var(--mint-soft); }
 @media (max-width: 480px) { .yn-form { grid-template-columns: 1fr; } }
+@media (max-width: 600px) {
+  .yn-table { min-width: 0; border-spacing: 0; }
+  .yn-table thead { position: absolute; left: -9999px; }
+  .yn-table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; background: var(--soft); border-radius: 16px; padding: 10px 14px; margin-bottom: 8px; }
+  .yn-table tbody th, .yn-table tbody td { background: none; padding: 0; border-radius: 0 !important; }
+  .yn-table .yn-mark { grid-column: 2; grid-row: 1; align-self: center; }
+  .yn-table td:nth-of-type(1) { grid-column: 1; }
+  .yn-table td:nth-of-type(2) { grid-column: 2; grid-row: 2; font-size: 13px; color: var(--muted); align-self: center; justify-self: end; }
+  .yn-table .yn-imi { grid-column: 1 / -1; min-width: 0; }
+}
