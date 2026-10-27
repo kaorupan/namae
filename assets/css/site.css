@@ -1,9 +1,9 @@
 /*
  * なまえ帖：見た目（ポップでかわいい版）
- *   クリーム色の背景にドット、ピンク・ミント・レモンのパステル。丸ゴシック、角の丸いカード、押せるボタン。
+ *   いつも明るい表示（ダークモードでも暗くしない）。レモン色の背景にカラフルな水玉、ピンクのヘッダー。丸ゴシック、角の丸いカード、押せるボタン。
  */
 :root {
-  --bg: #fff8f1; --dot: #ffe3d3; --paper: #ffffff; --ink: #3a2e4f; --text: #3d3550; --muted: #7a7089;
+  --bg: #fffbea; --dot: #ffe08a; --paper: #ffffff; --ink: #3a2e4f; --text: #3d3550; --muted: #7a7089;
   --line: #f1e3dc; --soft: #fff1ea;
   --pink: #ff7aa2; --pink-soft: #ffe4ec; --pink-deep: #e2557f;
   --mint: #3cc6a8; --mint-soft: #dcf7ef; --lemon: #ffd25e; --lemon-soft: #fff4cf; --sky: #6aa8ff; --sky-soft: #e3efff;
@@ -14,18 +14,15 @@
   --kanji: "Hiragino Mincho ProN", "Yu Mincho", "Noto Serif JP", serif;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #1f1a29; --dot: #2a2337; --paper: #2a2337; --ink: #f6eefe; --text: #ece6f3; --muted: #b6abc4;
-    --line: #3a3149; --soft: #332a42; --pink: #ff8fb2; --pink-soft: #46283a; --pink-deep: #ff9cbc;
-    --mint: #5fdcc0; --mint-soft: #1f3b37; --lemon: #ffd970; --lemon-soft: #3d3420; --sky: #8dbcff; --sky-soft: #22304a;
-    --shadow: 0 4px 0 rgba(0, 0, 0, .25); color-scheme: dark;
-  }
-}
 *, *::before, *::after { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+html { background: var(--bg); }
 body { margin: 0; color: var(--text); font: 500 16px/1.9 var(--round);
-  background: radial-gradient(var(--dot) 1.6px, transparent 1.7px) 0 0 / 22px 22px, var(--bg); }
+  background:
+    radial-gradient(circle, rgba(255, 122, 162, .35) 3px, transparent 3.5px) 0 0 / 60px 60px,
+    radial-gradient(circle, rgba(60, 198, 168, .35) 3px, transparent 3.5px) 30px 30px / 60px 60px,
+    radial-gradient(circle, rgba(106, 168, 255, .30) 2.5px, transparent 3px) 15px 45px / 60px 60px,
+    linear-gradient(180deg, #fff3c4 0, var(--bg) 420px, #fff0f5 100%); }
 a { color: var(--pink-deep); text-underline-offset: 3px; text-decoration-thickness: 2px; }
 a:hover { color: var(--ink); }
 :focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
@@ -35,14 +32,14 @@ img { max-width: 100%; }
 .skip:focus { left: 8px; top: 8px; background: var(--paper); padding: 6px 10px; z-index: 10; }
 
 /* ヘッダー・フッター */
-.hd { background: var(--paper); border-bottom: 3px dashed var(--pink-soft); }
+.hd { background: linear-gradient(100deg, #ff7aa2, #ff9a76 55%, #ffc65c); box-shadow: 0 4px 0 rgba(226, 85, 127, .25); }
 .hd .wrap { display: flex; align-items: center; justify-content: space-between; gap: 6px 12px; min-height: 64px; flex-wrap: wrap; padding-block: 8px; }
-.logo { font: 700 23px/1 var(--round); color: var(--ink); text-decoration: none; letter-spacing: .06em; display: inline-flex; align-items: center; }
-.logo span { display: inline-grid; place-items: center; width: 34px; height: 34px; margin-right: 8px; border-radius: 12px; background: var(--pink); color: #fff; font-size: 17px; transform: rotate(-8deg); box-shadow: 3px 3px 0 var(--lemon); }
+.logo { font: 700 24px/1 var(--round); color: #fff; text-shadow: 0 2px 0 rgba(180, 50, 90, .35); text-decoration: none; letter-spacing: .06em; display: inline-flex; align-items: center; }
+.logo span { display: inline-grid; place-items: center; width: 34px; height: 34px; margin-right: 8px; border-radius: 12px; background: #fff; color: var(--pink-deep); text-shadow: none; font-size: 17px; transform: rotate(-8deg); box-shadow: 3px 3px 0 var(--lemon); }
 .nav { display: flex; gap: 6px; flex-wrap: wrap; font-size: 14px; }
-.nav a { text-decoration: none; color: var(--ink); padding: 4px 12px; border-radius: 999px; background: var(--soft); font-weight: 700; }
-.nav a:hover, .nav a[aria-current] { background: var(--pink); color: #fff; }
-.ft { margin-top: 56px; padding: 28px 0 40px; background: var(--paper); border-top: 3px dashed var(--pink-soft); color: var(--muted); font-size: 13px; }
+.nav a { text-decoration: none; color: #fff; padding: 4px 12px; border-radius: 999px; background: rgba(255, 255, 255, .22); font-weight: 700; }
+.nav a:hover, .nav a[aria-current] { background: #fff; color: var(--pink-deep); }
+.ft { margin-top: 56px; padding: 28px 0 40px; background: linear-gradient(100deg, #dcf7ef, #e3efff); border-top: 4px solid var(--mint); color: var(--muted); font-size: 13px; }
 .ft ul { list-style: none; padding: 0; margin: 0 0 10px; display: flex; flex-wrap: wrap; gap: 6px 16px; }
 .ft a { color: var(--muted); }
 
