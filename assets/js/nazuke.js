@@ -28,6 +28,31 @@
     return { r: r, rt: rt, sim: sim };
   }
 
+  // 読み・字の意味・こめたい願い（候補ごとに書いておける。この端末にだけ保存）
+  function details(c) {
+    var IMI = N.kanjiImi || {};
+    var chars = Array.from(c.mei).filter(function (ch) { return /\p{Script=Han}/u.test(ch); });
+    var imi = chars.map(function (ch) { return IMI[ch] ? ch + "：" + IMI[ch][0] : null; }).filter(Boolean);
+    var lack = chars.filter(function (ch) { return !IMI[ch]; });
+    var yomi = el("input", { type: "text", maxlength: "20", placeholder: "例：はると", value: c.yomi || "", "aria-label": c.mei + "の読み" });
+    var wish = el("textarea", { rows: "2", maxlength: "200", placeholder: "例：明るく、まわりを照らす人に", "aria-label": c.mei + "にこめたい願い" });
+    wish.value = c.wish || "";
+    yomi.addEventListener("change", function () { c.yomi = yomi.value.trim().slice(0, 20); save(); render(); });
+    wish.addEventListener("change", function () { c.wish = wish.value.trim().slice(0, 200); save(); render(); });
+    return el("div", { class: "nz-detail" }, [
+      c.yomi ? el("p", { class: "nz-yomi", text: "読み：" + c.yomi }) : null,
+      imi.length ? el("ul", { class: "nz-imi" }, imi.map(function (t) { return el("li", { text: t }); })) : null,
+      lack.length ? el("p", { class: "nz-imi-more" }, lack.map(function (ch) { return el("a", { href: "../kanji/" + encodeURIComponent(ch) + "/", text: "「" + ch + "」の意味・読み" }); })) : null,
+      c.wish ? el("p", { class: "nz-wish", text: "願い：" + c.wish }) : null,
+      el("details", { class: "nz-edit" }, [
+        el("summary", { text: c.yomi || c.wish ? "読み・願いを書きかえる" : "読み・こめたい願いを書く" }),
+        el("label", null, ["読み", yomi]),
+        el("label", null, ["こめたい願い", wish]),
+        el("p", { class: "note", text: "書いた内容は、この端末のブラウザにだけ保存します。" })
+      ])
+    ]);
+  }
+
   function render() {
     var box = document.getElementById("nz-list"), info = document.getElementById("nz-count");
     box.textContent = "";
@@ -58,7 +83,8 @@
           el("a", { class: "nz-name", href: "../?sei=" + encodeURIComponent(state.sei) + "&mei=" + encodeURIComponent(c.mei) }, [el("span", { class: "nz-sei", text: state.sei }), c.mei]),
           el("span", { class: "nz-label", text: v.rt.mark.label }),
           el("div", { class: "nz-gs" }, [g("jin", "人格"), g("sou", "総格"), g("chi", "地格"), g("gai", "外格")]),
-          v.sim ? el("small", { class: "nz-sim", text: v.sim.person.sei + v.sim.person.mei + "と" + v.sim.level.label }) : null
+          v.sim ? el("small", { class: "nz-sim", text: v.sim.person.sei + v.sim.person.mei + "と" + v.sim.level.label }) : null,
+          details(c)
         ]), fav, del]));
     });
   }

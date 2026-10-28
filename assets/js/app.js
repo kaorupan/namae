@@ -132,6 +132,7 @@
     });
     var sec4 = el("section", { class: "sec", "aria-labelledby": "share-title" }, [
       el("h2", { id: "share-title", text: "結果をシェアする" }),
+      el("p", { class: "share-warn", text: "共有するリンクと文には「" + full + "」の姓名がふくまれます。送る相手やSNSの公開範囲に気をつけてください。" }),
       el("div", { class: "share" }, [
         el("a", { class: "s-line", href: "https://line.me/R/share?text=" + encodeURIComponent(text + "\n" + url), target: "_blank", rel: "noopener", text: "LINEで送る" }),
         el("a", { class: "s-x", href: "https://x.com/intent/post?text=" + encodeURIComponent(text) + "&url=" + encodeURIComponent(url), target: "_blank", rel: "noopener", text: "Xでポスト" }),

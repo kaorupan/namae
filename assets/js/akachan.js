@@ -57,7 +57,7 @@
     fav.addEventListener("click", function () {
       var v = store(); v.sei = sei;
       var at = -1; v.list.forEach(function (c, j) { if (c.mei === x.n.mei) at = j; });
-      if (at >= 0) v.list.splice(at, 1); else if (v.list.length < 60) v.list.push({ mei: x.n.mei, fav: true });
+      if (at >= 0) v.list.splice(at, 1); else if (v.list.length < 60) v.list.push({ mei: x.n.mei, fav: true, yomi: x.n.yomi[0] || "" });
       put(v); var on = at < 0; fav.classList.toggle("is-on", on); fav.textContent = on ? "♥" : "♡"; fav.setAttribute("aria-pressed", on ? "true" : "false");
       updateCount();
     });

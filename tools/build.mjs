@@ -54,7 +54,10 @@ function page({ path, title, desc: rawDesc, body, h1, crumbs = [], scripts = [],
   const url = BASE + "/" + encodeURI(path);
   const bc = [{ name: "トップ", url: BASE + "/" }].concat(crumbs.map((c) => ({ name: c.name, url: BASE + "/" + c.path })));
   const ld = jsonld.concat(crumbs.length ? [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: bc.map((b, i) => ({ "@type": "ListItem", position: i + 1, name: b.name, item: encodeURI(b.url) })) }] : []);
-  const nav = [["", "姓名判断"], ["akachan/", "赤ちゃんの名前"], ["nazuke/", "候補くらべ"], ["kazu/", "画数"], ["kanji/", "漢字"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人"]];
+  // メニュー：名づけの3つを主役に、調べものは「もっと見る」へ
+  const nav = [["", "姓名判断"], ["akachan/", "赤ちゃんの名前"], ["nazuke/", "候補くらべ"]];
+  const sub = [["kazu/", "画数の意味"], ["kanji/", "漢字辞典"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人の名前"]];
+  const subOn = sub.some(([p]) => path.startsWith(p));
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -86,7 +89,7 @@ ${ld.map((x) => `<script type="application/ld+json">${JSON.stringify(x)}</script
 <a class="skip" href="#main">本文へ</a>
 <header class="hd"><div class="wrap">
 <a class="logo" href="${up || "./"}"><span>名</span>${esc(SITE)}</a>
-<nav class="nav" aria-label="メニュー">${nav.map(([p, n]) => `<a href="${up}${p}"${p === path ? ' aria-current="page"' : ""}>${n}</a>`).join("")}</nav>
+<nav class="nav" aria-label="メニュー">${nav.map(([p, n]) => `<a href="${up}${p}"${p === path || (p && path.startsWith(p)) ? ' aria-current="page"' : ""}>${n}</a>`).join("")}<details class="nav-more"><summary${subOn ? ' class="is-on"' : ""}>もっと見る</summary><div class="nav-sub">${sub.map(([p, n]) => `<a href="${up}${p}"${path.startsWith(p) ? ' aria-current="page"' : ""}>${n}</a>`).join("")}</div></details></nav>
 </div></header>
 <main id="main" class="wrap">
 ${crumbs.length ? `<nav class="crumb" aria-label="パンくず"><ol>${bc.map((b, i) => i === bc.length - 1 ? `<li aria-current="page">${esc(b.name)}</li>` : `<li><a href="${up}${i ? crumbs[i - 1].path : ""}">${esc(b.name)}</a></li>`).join("")}</ol></nav>` : ""}
@@ -311,7 +314,7 @@ ${akYomi.indexHtml}
 // ---- 名づけ候補くらべ ----
 write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤ちゃんの名前の候補を姓名判断でくらべる｜${SITE}`, h1: "名づけ候補くらべ",
   desc: "赤ちゃんの名前の候補をいくつでも入れて、姓名判断の評価（💮◎〇△）と五格でくらべられます。候補はお使いの端末にだけ保存され、どこにも送りません。",
-  crumbs: [{ name: "名づけ候補くらべ", path: "nazuke/" }], scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "nazuke.js"],
+  crumbs: [{ name: "名づけ候補くらべ", path: "nazuke/" }], scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "kanji-imi-data.js", "nazuke.js"],
   body: `<div class="hero">
 <svg class="hero-art" viewBox="0 0 160 120" aria-hidden="true">
 <circle cx="80" cy="64" r="46" fill="var(--mint-soft)"/>
@@ -321,7 +324,7 @@ write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤�
 <text x="63" y="68" text-anchor="middle" font-size="20" fill="var(--mint)" font-weight="700" transform="rotate(-8 63 60)">◎</text>
 <path d="M24 26l4 9 9 4-9 4-4 9-4-9-9-4 9-4z" fill="var(--lemon)"/><path d="M140 96l3 6 6 3-6 3-3 6-3-6-6-3 6-3z" fill="var(--sky)"/>
 </svg>
-<p class="lead">赤ちゃんの名前の候補を、いくつでも入れてくらべられます。姓名判断の評価（<b>💮◎〇△</b>）が高い順に並ぶので、迷ったときのヒントに。</p>
+<p class="lead">赤ちゃんの名前の候補を、いくつでも入れてくらべられます。姓名判断の評価（<b>💮◎〇△</b>）に加えて、読み・漢字の意味・こめたい願いも一緒に見くらべられます。</p>
 <ul class="hero-tags" aria-label="できること"><li>候補は${60}件まで</li><li>♥でお気に入り</li><li>この端末にだけ保存</li></ul>
 </div>
 <section class="sec sec-form" aria-labelledby="nf">
@@ -369,7 +372,7 @@ write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤�
 </section>` }));
 
 // ---- このサイトについて・プライバシー ----
-write("about", page({ path: "about/", title: `このサイトについて｜${SITE}`, desc: `${SITE}は、赤ちゃんの名づけと姓名判断、名前に使える漢字を楽しく調べられる無料のサイトです。計算の方法と、使っているデータについて。`, crumbs: [{ name: "このサイトについて", path: "about/" }],
+write("about", page({ path: "about/", h1: "このサイトについて", title: `このサイトについて｜${SITE}`, desc: `${SITE}は、赤ちゃんの名づけと姓名判断、名前に使える漢字を楽しく調べられる無料のサイトです。計算の方法と、使っているデータについて。`, crumbs: [{ name: "このサイトについて", path: "about/" }],
   body: `<section class="sec prose"><h2>${esc(SITE)}とは</h2>
 <p>赤ちゃんの名づけや、自分の名前のことを、楽しく調べられる無料のサイトです。登録は要りません。</p>
 <ul>
@@ -380,6 +383,22 @@ write("about", page({ path: "about/", title: `このサイトについて｜${SI
 <li><a href="../kanji/">漢字辞典</a>：名前に使える常用漢字・人名用漢字の読み方・画数・部首。名づけでよく使う字には意味もつけています。</li>
 <li><a href="../yoji/">四字熟語</a>・<a href="../kotowaza/">ことわざ</a>：意味・由来・例文。意味と例文は、このサイトで書いたものです。</li>
 <li><a href="../ijin/">偉人の名前</a>：歴史上の人物の名前を姓名判断で見ています。</li>
+</ul>
+<h2>運営者情報</h2>
+<dl class="about-dl">
+<div><dt>サイト名</dt><dd>${esc(SITE)}</dd></div>
+<div><dt>URL</dt><dd>${esc(BASE)}/</dd></div>
+<div><dt>運営</dt><dd>${esc(SITE)}（個人運営）</dd></div>
+<div><dt>お問い合わせ</dt><dd><a href="../contact/">お問い合わせページ</a>から受け付けています</dd></div>
+</dl>
+<h2>${esc(SITE)}をつくった理由</h2>
+<p>赤ちゃんの名前を考えるとき、画数のよし悪しだけでなく、読みやすさ・漢字の意味・こめたい願いを、ひとつの場所で見くらべられたら便利だと考えて作りました。姓名判断を「決めつけるもの」ではなく、家族で話し合うための手がかりとして使ってもらえるように、評価はやわらかい4段階（💮◎〇△）にし、凶の数も、こわがらせず生かし方を書いています。</p>
+<h2>データと解説の確認・修正について</h2>
+<ul>
+<li><b>画数</b>：独立行政法人情報処理推進機構の「MJ文字情報一覧表」をもとに、新字体の画数を使っています。「海＝9画」「花＝7画」のように、日本で一般的な数え方になっているかを、公開前に自動のテストで確かめています。</li>
+<li><b>使える漢字と読み</b>：常用漢字の読みと例は文化庁「常用漢字表」によります。人名用漢字の一覧は公開されているデータによります。名前の候補に、名前に使えない字が入っていないかもテストで確かめています。</li>
+<li><b>解説の文章</b>：画数の意味、漢字の意味、四字熟語・ことわざの意味と由来は、一般的な姓名判断や辞書的な意味をもとに、${esc(SITE)}が書いたオリジナルの文章です。由来の説が分かれるものは「〜とされる」と書き、断定していません。結果を表示するときに、AIがその場で文章を作ることはありません。</li>
+<li><b>修正</b>：まちがいに気づいたときや、ご指摘をいただいたときは、内容を確かめて修正します。お気づきの点があれば、<a href="../contact/">お問い合わせ</a>からお知らせください。</li>
 </ul>
 <h2>計算の方法</h2>
 <p>画数は新字体で数え、五格（天格・人格・地格・外格・総格）と三才配置を出しています。数の吉凶は熊崎式の流れをくむ一般的な区分です。流派によって、一部の数の扱いや画数の数え方が異なります。</p>
@@ -393,7 +412,7 @@ write("about", page({ path: "about/", title: `このサイトについて｜${SI
 <p>サイトについてのご質問や不具合のご報告は、<a href="../contact/">お問い合わせ</a>のページからお送りください。</p>
 </section>` }));
 const FORM = (CONF.contactFormUrl || "").trim();
-write("contact", page({ path: "contact/", title: `お問い合わせ｜${SITE}`, desc: `${SITE}へのお問い合わせ。サイトの内容についてのご質問や、表示の不具合のご報告はこちらから。`, crumbs: [{ name: "お問い合わせ", path: "contact/" }],
+write("contact", page({ path: "contact/", h1: "お問い合わせ", title: `お問い合わせ｜${SITE}`, desc: `${SITE}へのお問い合わせ。サイトの内容についてのご質問や、表示の不具合のご報告はこちらから。`, crumbs: [{ name: "お問い合わせ", path: "contact/" }],
   body: `<section class="sec prose">
 <p>サイトの内容についてのご質問、表示の不具合のご報告などは、下のフォームからお送りください。</p>
 ${/^https:\/\//.test(FORM) ? `<p><a class="btn" href="${esc(FORM)}" target="_blank" rel="noopener">お問い合わせフォームを開く</a></p>
@@ -405,11 +424,11 @@ ${/^https:\/\//.test(FORM) ? `<p><a class="btn" href="${esc(FORM)}" target="_bla
 <li>いただいた情報は、<a href="../privacy/">プライバシーポリシー</a>にもとづいて、お問い合わせへの回答のためだけに使います。</li>
 </ul>
 </section>` }));
-write("privacy", page({ path: "privacy/", title: `プライバシーポリシー｜${SITE}`, desc: `${SITE}のプライバシーポリシー。`, crumbs: [{ name: "プライバシーポリシー", path: "privacy/" }],
+write("privacy", page({ path: "privacy/", h1: "プライバシーポリシー", title: `プライバシーポリシー｜${SITE}`, desc: `${SITE}のプライバシーポリシー。`, crumbs: [{ name: "プライバシーポリシー", path: "privacy/" }],
   body: `<section class="sec prose">
 <h2>入力した名前について</h2>
 <p>姓名判断で入力した名前は、お使いの端末の中だけで計算します。サーバーに送ったり、保存したりしません。結果のリンクには名前がふくまれるので、シェアするときはご注意ください。</p>
-<p>「名づけ候補くらべ」に入れた姓と名前の候補は、あとで見返せるように、お使いの端末のブラウザ（ローカルストレージ）にだけ保存します。サーバーには送りません。「候補を全部消す」ボタンや、ブラウザのサイトデータの削除で消すことができます。</p>
+<p>「名づけ候補くらべ」に入れた姓と名前の候補（書きこんだ読みやこめたい願いをふくむ）は、あとで見返せるように、お使いの端末のブラウザ（ローカルストレージ）にだけ保存します。サーバーには送りません。「候補を全部消す」ボタンや、ブラウザのサイトデータの削除で消すことができます。</p>
 <h2>アクセス解析について</h2>
 <p>サイトの改善のため、Googleアナリティクスを使っています。Cookieを使って、個人を特定しない形でアクセス情報（見られたページなど）を集めます。入力した名前・名字や、結果のリンクにふくまれる名前は送りません。</p>
 <h2>広告について</h2>
@@ -419,7 +438,7 @@ write("privacy", page({ path: "privacy/", title: `プライバシーポリシー
 </section>` }));
 
 // ---- 画数の意味（1〜81） ----
-const kazu = buildKazu({ page, write, esc, L, people, kanjiStrokes: new Set(JSON.parse(readFileSync(join(ROOT, "data/kanji.json"), "utf8")).map((k) => k.strokes)) });
+const kazu = buildKazu({ page, write, esc, L, people, S, NAMES, kanjiStrokes: new Set(JSON.parse(readFileSync(join(ROOT, "data/kanji.json"), "utf8")).map((k) => k.strokes)) });
 
 // ---- 漢字辞典 ----
 const kanji = buildKanji({ ROOT, page, write, esc, people, L, phrases: phrasesByChar() });

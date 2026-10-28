@@ -345,3 +345,37 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
 .kz-list b { font: 700 22px var(--round); color: var(--pink-deep); min-width: 1.6em; text-align: center; }
 .kz-list span { font-size: 13px; font-weight: 700; line-height: 1.4; }
 .kz-pn { display: flex; justify-content: space-between; gap: 8px; margin: 14px 0 0; font-weight: 700; }
+.kz-role { margin: -4px 0 4px; font-size: 13px; color: var(--muted); font-weight: 700; }
+
+/* 候補くらべ：読み・意味・願い */
+.share-warn { margin: 0 0 8px; font-size: 13px; font-weight: 700; color: var(--pink-deep); background: var(--pink-soft); border-radius: 12px; padding: 8px 12px; }
+.nz-detail { margin-top: 6px; display: grid; gap: 4px; }
+.nz-yomi, .nz-wish { margin: 0; font-size: 14px; font-weight: 700; color: var(--ink); }
+.nz-wish { background: var(--lemon-soft); border-radius: 10px; padding: 4px 10px; }
+.nz-imi { list-style: none; padding: 0; margin: 0; font-size: 13px; color: var(--muted); }
+.nz-imi-more { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12px; }
+.nz-edit summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--pink-deep); min-height: 32px; display: flex; align-items: center; }
+.nz-edit label { display: grid; gap: 2px; font-size: 12px; font-weight: 700; margin-top: 6px; }
+.nz-edit input, .nz-edit textarea { width: 100%; font: 500 15px var(--round); padding: 8px 10px; border: 2px solid var(--line); border-radius: 10px; background: var(--paper); color: var(--text); }
+.nz-edit input:focus, .nz-edit textarea:focus { border-color: var(--pink); outline: none; }
+
+/* メニュー：もっと見る */
+.nav { align-items: center; }
+.nav-more { position: relative; }
+.nav-more summary { list-style: none; cursor: pointer; color: #fff; padding: 4px 12px; border-radius: 999px; background: rgba(255, 255, 255, .22); font-weight: 700; white-space: nowrap; }
+.nav-more summary::-webkit-details-marker { display: none; }
+.nav-more summary::after { content: " ▾"; font-size: 11px; }
+.nav-more[open] summary, .nav-more summary.is-on { background: #fff; color: var(--pink-deep); }
+.nav-sub { position: absolute; right: 0; top: calc(100% + 6px); z-index: 20; display: grid; gap: 2px; min-width: 160px; padding: 8px; background: var(--paper); border-radius: 16px; box-shadow: 0 8px 24px rgba(58, 46, 79, .18); }
+.nav-sub a { color: var(--ink) !important; background: none !important; padding: 8px 12px; border-radius: 10px; white-space: nowrap; }
+.nav-sub a:hover, .nav-sub a[aria-current] { background: var(--pink-soft) !important; color: var(--pink-deep) !important; }
+@media (max-width: 600px) { .nav { overflow: visible; flex-wrap: wrap; } }
+.about-dl { margin: 0 0 12px; display: grid; gap: 6px; }
+.about-dl div { display: grid; grid-template-columns: 7em minmax(0, 1fr); gap: 8px; padding: 8px 12px; background: var(--soft); border-radius: 12px; }
+.about-dl dt { font-weight: 700; color: var(--pink-deep); }
+.about-dl dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 600px) {
+  .nav-more[open] { flex-basis: 100%; }
+  .nav-sub { position: static; margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; padding: 0; background: none; box-shadow: none; min-width: 0; }
+  .nav-sub a { background: rgba(255, 255, 255, .92) !important; padding: 4px 12px; border-radius: 999px; }
+}
