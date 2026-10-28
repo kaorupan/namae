@@ -65,7 +65,7 @@ function page({ path, title, desc, body, h1, crumbs = [], scripts = [], jsonld =
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap">
 <link rel="stylesheet" href="${up}assets/css/site.css">
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-YLP16D0TXV"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-YLP16D0TXV",{page_location:location.origin+location.pathname});</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-YLP16D0TXV",{page_location:location.origin+location.pathname,page_referrer:document.referrer.replace(/[?#].*$/,"")});</script>
 ${ld.map((x) => `<script type="application/ld+json">${JSON.stringify(x)}</script>`).join("\n")}
 </head>
 <body>
