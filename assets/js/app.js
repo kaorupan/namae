@@ -90,7 +90,7 @@
     var kaku = el("ul", { class: "kaku" }, ["jin", "sou", "chi", "gai", "ten"].map(function (k) {
       var g = r[k], l = L.of(g.value);
       var stars = { "大吉": "★★★", "吉": "★★☆", "半吉": "★☆☆", "凶": "☆☆☆" }[l.luck];
-      return el("li", { class: "k-" + k }, [el("b", { text: NAME[k] }), el("span", { class: "n", text: g.value + "画" }), el("span", { class: "luck l-" + l.luck, text: l.luck }),
+      return el("li", { class: "k-" + k }, [el("b", { text: NAME[k] }), el("a", { class: "n", href: "kazu/" + l.n + "/", text: g.value + "画" }), el("span", { class: "luck l-" + l.luck, text: l.luck }),
         el("span", { class: "stars", "aria-hidden": "true", text: stars }),
         el("small", { text: l.keyword }), el("span", { class: "role", text: ROLE[k] })]);
     }));

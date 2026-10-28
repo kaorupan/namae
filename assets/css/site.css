@@ -329,3 +329,19 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
   .yn-table td:nth-of-type(2) { grid-column: 2; grid-row: 2; font-size: 13px; color: var(--muted); align-self: center; justify-self: end; }
   .yn-table .yn-imi { grid-column: 1 / -1; min-width: 0; }
 }
+
+/* 画数の意味 */
+.kaku a.n { color: var(--ink); text-decoration: underline dotted var(--pink); text-underline-offset: 4px; }
+.kz-head { display: flex; align-items: center; gap: 22px; }
+.kz-num { width: 120px; height: 120px; border-radius: 50%; background: var(--lemon-soft); border: 4px dashed var(--lemon); display: grid; place-items: center; align-content: center; transform: rotate(-6deg); }
+.kz-num b { font: 700 52px/1 var(--round); color: var(--pink-deep); }
+.kz-num span { font-size: 14px; font-weight: 700; color: var(--muted); }
+.kz-luck { display: inline-block; margin: 0 0 6px; padding: 2px 16px; border-radius: 999px; font-weight: 700; background: var(--soft); color: var(--muted); }
+.kz-luck.l-大吉 { background: var(--pink); color: #fff; } .kz-luck.l-吉 { background: var(--pink-soft); color: var(--pink-deep); } .kz-luck.l-半吉 { background: var(--lemon-soft); color: var(--ink); }
+.kz-key { margin: 0; font: 700 24px/1.4 var(--round); color: var(--ink); }
+.kz-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.kz-list a { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 14px; background: var(--soft); text-decoration: none; color: var(--text); min-height: 52px; }
+.kz-list a:hover { background: var(--pink-soft); }
+.kz-list b { font: 700 22px var(--round); color: var(--pink-deep); min-width: 1.6em; text-align: center; }
+.kz-list span { font-size: 13px; font-weight: 700; line-height: 1.4; }
+.kz-pn { display: flex; justify-content: space-between; gap: 8px; margin: 14px 0 0; font-weight: 700; }

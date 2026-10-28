@@ -10,6 +10,7 @@ import { buildPhrases, phrasesByChar } from "./phrase-pages.mjs";
 import NAMES from "../data/names.mjs";
 import IMI from "../data/kanji-imi.mjs";
 import { buildAkachanYomi } from "./akachan-pages.mjs";
+import { buildKazu } from "./kazu-pages.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -37,13 +38,23 @@ const people = LIST.map((p) => {
   return { ...p, r, rt: C.rate(r) };
 });
 
-function page({ path, title, desc, body, h1, crumbs = [], scripts = [], jsonld = [] }) {
+// 検索結果の説明文は120字まで。文の途中で切らず「。」で終える（えみりと同じルール）
+function fitDesc(text) {
+  const t = Array.from(String(text).replace(/\s+/g, " ").trim());
+  if (t.length <= 120) return t.join("");
+  const head = t.slice(0, 120).join(""), end = head.lastIndexOf("。");
+  if (end >= 30) return head.slice(0, end + 1);
+  const comma = head.lastIndexOf("、");
+  return (comma >= 30 ? head.slice(0, comma) : Array.from(head).slice(0, 119).join("")) + "…";
+}
+function page({ path, title, desc: rawDesc, body, h1, crumbs = [], scripts = [], jsonld = [] }) {
+  const desc = fitDesc(rawDesc);
   const depth = path === "" ? 0 : path.split("/").filter(Boolean).length;
   const up = "../".repeat(depth);
   const url = BASE + "/" + encodeURI(path);
   const bc = [{ name: "トップ", url: BASE + "/" }].concat(crumbs.map((c) => ({ name: c.name, url: BASE + "/" + c.path })));
   const ld = jsonld.concat(crumbs.length ? [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: bc.map((b, i) => ({ "@type": "ListItem", position: i + 1, name: b.name, item: encodeURI(b.url) })) }] : []);
-  const nav = [["", "姓名判断"], ["akachan/", "赤ちゃんの名前"], ["nazuke/", "候補くらべ"], ["kanji/", "漢字"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人"]];
+  const nav = [["", "姓名判断"], ["akachan/", "赤ちゃんの名前"], ["nazuke/", "候補くらべ"], ["kazu/", "画数"], ["kanji/", "漢字"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人"]];
   return `<!doctype html>
 <html lang="ja">
 <head>
@@ -57,7 +68,10 @@ function page({ path, title, desc, body, h1, crumbs = [], scripts = [], jsonld =
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${esc(url)}">
 <meta property="og:site_name" content="${esc(SITE)}">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="${BASE}/assets/img/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#ff7aa2">
 <meta name="color-scheme" content="light only">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -80,7 +94,7 @@ ${crumbs.length ? `<nav class="crumb" aria-label="パンくず"><ol>${bc.map((b,
 ${body}
 </main>
 <footer class="ft"><div class="wrap">
-<ul><li><a href="${up}">姓名判断</a></li><li><a href="${up}akachan/">赤ちゃんの名前さがし</a></li><li><a href="${up}nazuke/">名づけ候補くらべ</a></li><li><a href="${up}kanji/">漢字辞典</a></li><li><a href="${up}yoji/">四字熟語</a></li><li><a href="${up}kotowaza/">ことわざ</a></li><li><a href="${up}ijin/">偉人の名前</a></li><li><a href="${up}about/">このサイトについて</a></li><li><a href="${up}privacy/">プライバシーポリシー</a></li></ul>
+<ul><li><a href="${up}">姓名判断</a></li><li><a href="${up}akachan/">赤ちゃんの名前さがし</a></li><li><a href="${up}nazuke/">名づけ候補くらべ</a></li><li><a href="${up}kazu/">画数の意味</a></li><li><a href="${up}kanji/">漢字辞典</a></li><li><a href="${up}yoji/">四字熟語</a></li><li><a href="${up}kotowaza/">ことわざ</a></li><li><a href="${up}ijin/">偉人の名前</a></li><li><a href="${up}about/">このサイトについて</a></li><li><a href="${up}contact/">お問い合わせ</a></li><li><a href="${up}privacy/">プライバシーポリシー</a></li></ul>
 <p>画数データの一部に、文字情報基盤（MJ文字情報一覧表、独立行政法人情報処理推進機構）を使っています（CC BY-SA 2.1 JP）。漢字の読みと例は文化庁「常用漢字表」、人名用漢字の一覧と読み・部首は Unicode Unihan Database（Unicode License v3）によります。</p>
 <p>&copy; ${esc(SITE)}</p>
 </div></footer>
@@ -97,7 +111,7 @@ const write = (path, html) => {
 };
 
 const charsHtml = (r) => `<div class="chars" aria-label="名前の字と画数">${r.sei.map((c) => `<div class="char"><b>${esc(c.ch)}</b><span>${c.strokes}画</span></div>`).join("")}<div class="char is-sep" aria-hidden="true"></div>${r.mei.map((c) => `<div class="char"><b>${esc(c.ch)}</b><span>${c.strokes}画</span></div>`).join("")}</div>`;
-const kakuHtml = (r) => `<ul class="kaku">${ORDER.map((k) => { const l = L.of(r[k].value); return `<li><b>${NAME[k]}</b><span class="n">${r[k].value}画</span><span class="luck l-${l.luck}">${l.luck}</span><small>${esc(l.keyword)}</small><span class="role">${ROLE[k]}</span></li>`; }).join("")}</ul>`;
+const kakuHtml = (r, KZ = "../../") => `<ul class="kaku">${ORDER.map((k) => { const l = L.of(r[k].value); return `<li><b>${NAME[k]}</b><a class="n" href="${KZ}kazu/${l.n}/">${r[k].value}画</a><span class="luck l-${l.luck}">${l.luck}</span><small>${esc(l.keyword)}</small><span class="role">${ROLE[k]}</span></li>`; }).join("")}</ul>`;
 const personLink = (p) => `<li><a href="../${p.slug}/"><span class="nm">${esc(p.sei + p.mei)}</span><span class="sub">${esc(p.era)}・${esc(p.fieldName)}</span><span class="mk" aria-label="評価：${esc(p.rt.mark.label)}">${p.rt.mark.mark}</span></a></li>`;
 
 // ---- 偉人ごとのページ ----
@@ -355,16 +369,41 @@ write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤�
 </section>` }));
 
 // ---- このサイトについて・プライバシー ----
-write("about", page({ path: "about/", title: `このサイトについて｜${SITE}`, desc: `${SITE}の姓名判断の計算方法と、使っているデータについて。`, crumbs: [{ name: "このサイトについて", path: "about/" }],
+write("about", page({ path: "about/", title: `このサイトについて｜${SITE}`, desc: `${SITE}は、赤ちゃんの名づけと姓名判断、名前に使える漢字を楽しく調べられる無料のサイトです。計算の方法と、使っているデータについて。`, crumbs: [{ name: "このサイトについて", path: "about/" }],
   body: `<section class="sec prose"><h2>${esc(SITE)}とは</h2>
-<p>名前と漢字のことを、楽しく調べられるサイトです。姓名判断、偉人の名前の姓名判断、名前に使える漢字の辞典、四字熟語・ことわざの意味を調べられます。四字熟語・ことわざの意味と例文は、このサイトで書いたものです。</p>
+<p>赤ちゃんの名づけや、自分の名前のことを、楽しく調べられる無料のサイトです。登録は要りません。</p>
+<ul>
+<li><a href="../">姓名判断</a>：名前の画数から五格を出して、💮◎〇△の4段階で評価します。五格の図と、似ている偉人もわかります。</li>
+<li><a href="../akachan/">赤ちゃんの姓名判断・名前さがし</a>：名字を入れると、名前の候補を評価のよい順に表示します。読みごとの名前の一覧もあります。</li>
+<li><a href="../nazuke/">名づけ候補くらべ</a>：気になる名前を並べて、評価の順にくらべられます。</li>
+<li><a href="../kazu/">画数の意味（1〜81）</a>：姓名判断で使う数の吉凶と意味を、数ごとに解説しています。</li>
+<li><a href="../kanji/">漢字辞典</a>：名前に使える常用漢字・人名用漢字の読み方・画数・部首。名づけでよく使う字には意味もつけています。</li>
+<li><a href="../yoji/">四字熟語</a>・<a href="../kotowaza/">ことわざ</a>：意味・由来・例文。意味と例文は、このサイトで書いたものです。</li>
+<li><a href="../ijin/">偉人の名前</a>：歴史上の人物の名前を姓名判断で見ています。</li>
+</ul>
 <h2>計算の方法</h2>
 <p>画数は新字体で数え、五格（天格・人格・地格・外格・総格）と三才配置を出しています。数の吉凶は熊崎式の流れをくむ一般的な区分です。流派によって、一部の数の扱いや画数の数え方が異なります。</p>
 <p>評価（💮◎〇△）は、人格35％・総格30％・地格15％・外格10％・三才配置10％の重みで吉凶をまとめた、このサイト独自の目安です。</p>
+<p>姓名判断は、名前を考えるときのひとつの手がかりです。響きや意味、家族の思いも大切にして名前を選んでください。</p>
 <h2>偉人のページについて</h2>
 <p>載せているのは歴史上の人物だけです。人物の説明は、広く知られている事実を短くまとめています。姓名判断の結果は、その人の生き方や功績を評価するものではありません。</p>
 <h2>使っているデータ</h2>
-<p>画数データの一部に、文字情報基盤（MJ文字情報一覧表、独立行政法人情報処理推進機構）を使っています。ライセンスは<a href="https://creativecommons.org/licenses/by-sa/2.1/jp/" rel="license noopener">CC BY-SA 2.1 JP</a>です。</p>
+<p>画数データの一部に、文字情報基盤（MJ文字情報一覧表、独立行政法人情報処理推進機構）を使っています。ライセンスは<a href="https://creativecommons.org/licenses/by-sa/2.1/jp/" rel="license noopener">CC BY-SA 2.1 JP</a>です。漢字の読みと例は文化庁「常用漢字表」、人名用漢字の一覧と読み・部首は Unicode Unihan Database（Unicode License v3）によります。</p>
+<h2>お問い合わせ</h2>
+<p>サイトについてのご質問や不具合のご報告は、<a href="../contact/">お問い合わせ</a>のページからお送りください。</p>
+</section>` }));
+const FORM = (CONF.contactFormUrl || "").trim();
+write("contact", page({ path: "contact/", title: `お問い合わせ｜${SITE}`, desc: `${SITE}へのお問い合わせ。サイトの内容についてのご質問や、表示の不具合のご報告はこちらから。`, crumbs: [{ name: "お問い合わせ", path: "contact/" }],
+  body: `<section class="sec prose">
+<p>サイトの内容についてのご質問、表示の不具合のご報告などは、下のフォームからお送りください。</p>
+${/^https:\/\//.test(FORM) ? `<p><a class="btn" href="${esc(FORM)}" target="_blank" rel="noopener">お問い合わせフォームを開く</a></p>
+<p class="note">Googleフォームが別のタブで開きます。</p>` : `<p class="note">お問い合わせフォームは準備中です。</p>`}
+<ul>
+<li>ご返信までに数日いただくことがあります。</li>
+<li>個別の名づけのご依頼や、姓名判断の結果についての個人的なご相談にはお答えできません。</li>
+<li>不具合のご報告は、お使いの機種・ブラウザと、表示されたページを書いていただけると助かります。</li>
+<li>いただいた情報は、<a href="../privacy/">プライバシーポリシー</a>にもとづいて、お問い合わせへの回答のためだけに使います。</li>
+</ul>
 </section>` }));
 write("privacy", page({ path: "privacy/", title: `プライバシーポリシー｜${SITE}`, desc: `${SITE}のプライバシーポリシー。`, crumbs: [{ name: "プライバシーポリシー", path: "privacy/" }],
   body: `<section class="sec prose">
@@ -379,12 +418,15 @@ write("privacy", page({ path: "privacy/", title: `プライバシーポリシー
 <p>姓名判断の結果は目安です。名前に関する大切な判断は、ご自身の考えを大切にしてください。</p>
 </section>` }));
 
+// ---- 画数の意味（1〜81） ----
+const kazu = buildKazu({ page, write, esc, L, people, kanjiStrokes: new Set(JSON.parse(readFileSync(join(ROOT, "data/kanji.json"), "utf8")).map((k) => k.strokes)) });
+
 // ---- 漢字辞典 ----
 const kanji = buildKanji({ ROOT, page, write, esc, people, L, phrases: phrasesByChar() });
 const phrases = buildPhrases({ page, write, esc, kanjiSet: kanji.set });
 
 // ---- sitemap・robots ----
-const urls = ["", "akachan/", ...akYomi.urls, "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, "about/", "privacy/"];
+const urls = ["", "akachan/", ...akYomi.urls, "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, ...kazu.urls, "about/", "contact/", "privacy/"];
 writeFileSync(join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${BASE}/${encodeURI(u)}</loc></url>`).join("\n")}\n</urlset>\n`);
 writeFileSync(join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
 console.log("built", urls.length, "pages");
