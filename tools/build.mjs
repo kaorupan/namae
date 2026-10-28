@@ -64,6 +64,8 @@ function page({ path, title, desc, body, h1, crumbs = [], scripts = [], jsonld =
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap">
 <link rel="stylesheet" href="${up}assets/css/site.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YLP16D0TXV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag("js",new Date());gtag("config","G-YLP16D0TXV",{page_location:location.origin+location.pathname});</script>
 ${ld.map((x) => `<script type="application/ld+json">${JSON.stringify(x)}</script>`).join("\n")}
 </head>
 <body>
@@ -370,7 +372,7 @@ write("privacy", page({ path: "privacy/", title: `プライバシーポリシー
 <p>姓名判断で入力した名前は、お使いの端末の中だけで計算します。サーバーに送ったり、保存したりしません。結果のリンクには名前がふくまれるので、シェアするときはご注意ください。</p>
 <p>「名づけ候補くらべ」に入れた姓と名前の候補は、あとで見返せるように、お使いの端末のブラウザ（ローカルストレージ）にだけ保存します。サーバーには送りません。「候補を全部消す」ボタンや、ブラウザのサイトデータの削除で消すことができます。</p>
 <h2>アクセス解析について</h2>
-<p>サイトの改善のため、Googleアナリティクスを使う場合があります。Cookieを使って、個人を特定しない形でアクセス情報を集めます。入力した名前は送りません。</p>
+<p>サイトの改善のため、Googleアナリティクスを使っています。Cookieを使って、個人を特定しない形でアクセス情報（見られたページなど）を集めます。入力した名前・名字や、結果のリンクにふくまれる名前は送りません。</p>
 <h2>広告について</h2>
 <p>第三者配信の広告サービス（Google AdSense）を使う場合があります。広告配信事業者は、Cookieを使ってユーザーの興味に合わせた広告を表示することがあります。パーソナライズ広告は<a href="https://adssettings.google.com/" rel="noopener">広告設定</a>で無効にできます。</p>
 <h2>免責事項</h2>

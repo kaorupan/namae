@@ -162,7 +162,7 @@
       err.textContent = "画数がわからない文字がふくまれています。漢字・ひらがな・カタカナで入れてください。";
       err.hidden = false; form.sei.focus(); return;
     }
-    if (push) try { root.history.replaceState(null, "", "?sei=" + encodeURIComponent(sei) + "&mei=" + encodeURIComponent(mei)); } catch (e) {}
+    // アドレス欄には名前を入れない（アクセス解析に名前が送られないように）。シェア用のリンクは結果の中で作る
     render(box, sei, mei, r);
   }
 
