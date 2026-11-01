@@ -98,7 +98,7 @@ ${kanjiStrokes.has(n) ? `<section class="sec" aria-labelledby="k5"><h2 id="k5">$
 ${LUCK_ORDER.map((g) => `<section class="sec" aria-labelledby="g-${g}"><h2 id="g-${g}">${g}の数</h2><ul class="kz-list">${all.filter((m) => L.of(m).luck === g).map((m) => `<li><a href="${m}/"><b>${m}</b><span>${esc(L.of(m).keyword)}</span></a></li>`).join("")}</ul></section>`).join("\n")}
 <section class="sec prose" aria-labelledby="g-how"><h2 id="g-how">数の見方</h2><p>姓名判断では、名前の字の画数から五格（天格・人格・地格・外格・総格）を出し、それぞれの数の吉凶を見ます。81をこえる数は、80を引いて考えます（82は2）。吉凶の区分は熊崎式の流れをくむ一般的なもので、流派によって一部の数の扱いが異なります。</p>
 <p><a class="btn" href="../">名前を入れて五格を調べる</a></p></section>`;
-  write("kazu", page({ path: "kazu/", title: "姓名判断の画数の意味一覧（1〜81）｜大吉・吉・凶がひと目でわかる｜なまえ帖", h1: "画数の意味（1〜81）",
+  write("kazu", page({ path: "kazu/", title: "姓名判断の画数早見表（1〜81）｜吉凶と意味の一覧｜なまえ帖", h1: "画数の意味と早見表（1〜81）",
     desc: "姓名判断で使う1〜81の数の吉凶とキーワードの一覧。大吉・吉・半吉・凶に分けて、数ごとの意味・性格・恋愛・生かし方を解説します。",
     crumbs: [{ name: "画数の意味", path: "kazu/" }], body }));
   urls.unshift("kazu/");

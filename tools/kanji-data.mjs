@@ -68,7 +68,11 @@ const list = order.map((ch) => {
 });
 const bad = list.filter((k) => !k.strokes || !k.rad);
 if (bad.length) console.warn("画数・部首なし:", bad.map((k) => k.ch).join(""));
+// 常用漢字の旧字体（康熙字典体）。名前に使えない旧字体も、読み方を調べられるようにページを作る
+const kyuji = q("select 漢字 ch, 康熙字典体 old from joyo_kangxi").filter((r) => r.old && r.old !== r.ch && !(r.old.codePointAt(0) >= 0xf900 && r.old.codePointAt(0) <= 0xfaff))
+  .map((r) => ({ ch: r.ch, old: r.old, strokes: strokes(r.old) }));
 mkdirSync(join(ROOT, "data"), { recursive: true });
 writeFileSync(join(ROOT, "data/kanji.json"), JSON.stringify(list));
+writeFileSync(join(ROOT, "data/kyuji.json"), JSON.stringify(kyuji));
 console.log("kanji", list.length, "joyo", list.filter((k) => k.type === "joyo").length, "jinmei", list.filter((k) => k.type === "jinmei").length,
   "variants", [...variants.values()].flat().length, "kata2hira test", kata2hira("ショウ"));

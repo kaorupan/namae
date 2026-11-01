@@ -172,7 +172,7 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 <section class="sec" aria-labelledby="sum"><h2 id="sum">評価のわりあい</h2>
 <ul class="marks">${C.MARKS.map((m) => `<li><b>${m.mark}</b><span>${m.label}：${count(m.mark)}人</span></li>`).join("")}</ul>
 <p class="note">載せているのは歴史上の人物だけです。号・筆名で広く知られる人は、その名前で見ています。</p></section>`;
-  write("ijin", page({ path: "ijin/", title: `偉人の姓名判断｜歴史上の人物${people.length}人の画数と評価｜${SITE}`, h1: "偉人の名前を姓名判断",
+  write("ijin", page({ path: "ijin/", title: `偉人の名前一覧（${people.length}人）｜歴史上の人物の姓名判断・画数と評価｜${SITE}`, h1: "偉人の名前を姓名判断",
     desc: `坂本龍馬・織田信長・夏目漱石など、歴史上の人物${people.length}人の名前を姓名判断。画数と五格、💮◎〇△の評価を時代別に紹介します。`,
     crumbs: [{ name: "偉人の名前", path: "ijin/" }], body }));
 }

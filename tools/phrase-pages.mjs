@@ -31,11 +31,11 @@ export function buildPhrases({ page, write, esc, kanjiSet }) {
 <section class="sec prose" aria-labelledby="m"><h2 id="m">「${esc(x.w)}」の意味</h2><p class="pmean">${esc(x.mean)}</p></section>
 ${YURAI[x.w] ? `<section class="sec prose" aria-labelledby="o2"><h2 id="o2">「${esc(x.w)}」の由来</h2><p class="porigin">${esc(YURAI[x.w])}</p></section>` : ""}
 <section class="sec prose" aria-labelledby="e"><h2 id="e">使い方・例文</h2><p class="pex">${esc(x.ex)}</p></section>
-${x.rel ? `<section class="sec prose" aria-labelledby="r"><h2 id="r">似た意味の${kind.name}</h2><p>${names.has(x.rel) ? `<a href="../${x.rel}/">${esc(x.rel)}</a>` : esc(x.rel)}</p></section>` : ""}
+${x.rel ? `<section class="sec prose" aria-labelledby="r"><h2 id="r">似た意味の${kind.name}（類語）</h2><p>${names.has(x.rel) ? `<a href="../${x.rel}/">${esc(x.rel)}</a>` : esc(x.rel)}</p></section>` : ""}
 ${chars.length ? `<section class="sec" aria-labelledby="k"><h2 id="k">使われている漢字</h2><ul class="kchips">${chars.map((c) => `<li><a href="../../kanji/${c}/">${esc(c)}</a></li>`).join("")}</ul><p class="note">字をえらぶと、読み方・画数・名前に使えるかがわかります。</p></section>` : ""}
 <section class="sec" aria-labelledby="o"><h2 id="o">ほかの${kind.name}</h2><ul class="plist">${near.map((n) => `<li><a href="../${n.w}/"><b>${esc(n.w)}</b><small>${esc(n.y)}</small></a></li>`).join("")}</ul>
 <p><a href="../">${kind.name}の一覧（${list.length}）→</a></p></section>`;
-      write(`${kind.dir}/${x.w}`, page({ path: `${kind.dir}/${x.w}/`, title: YURAI[x.w] ? `「${x.w}」の意味・由来・使い方｜${kind.name}` : `「${x.w}」の意味・読み方・使い方｜${kind.name}`, h1: `${esc(x.w)}`, desc,
+      write(`${kind.dir}/${x.w}`, page({ path: `${kind.dir}/${x.w}/`, title: `「${x.w}」の意味・${YURAI[x.w] ? "由来" : "読み方"}・例文${x.rel ? "・類語" : ""}｜${kind.name}`, h1: `${esc(x.w)}`, desc,
         crumbs: [{ name: kind.name, path: `${kind.dir}/` }, { name: x.w, path: `${kind.dir}/${x.w}/` }], body }));
       urls.push(`${kind.dir}/${x.w}/`);
     });
