@@ -158,7 +158,7 @@ ${sameSou.length ? `<h3>総格が同じ${r.sou.value}画</h3><ul class="people">
 </section>
 ${sameEra.length ? `<section class="sec" aria-labelledby="era"><h2 id="era">${esc(p.era)}の偉人</h2><ul class="people">${sameEra.map(personLink).join("")}</ul></section>` : ""}`;
   write(`ijin/${p.slug}`, page({
-    path: `ijin/${p.slug}/`, title: `${full}の姓名判断｜画数と五格・名前の評価｜${SITE}`, h1: `${esc(full)}の姓名判断`, desc,
+    path: `ijin/${p.slug}/`, title: `${full}の名前を姓名判断｜画数と五格の吉凶、評価は？`, h1: `${esc(full)}の姓名判断`, desc,
     crumbs: [{ name: "偉人の名前", path: "ijin/" }, { name: full, path: `ijin/${p.slug}/` }], body
   }));
 }
@@ -172,7 +172,7 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 <section class="sec" aria-labelledby="sum"><h2 id="sum">評価のわりあい</h2>
 <ul class="marks">${C.MARKS.map((m) => `<li><b>${m.mark}</b><span>${m.label}：${count(m.mark)}人</span></li>`).join("")}</ul>
 <p class="note">載せているのは歴史上の人物だけです。号・筆名で広く知られる人は、その名前で見ています。</p></section>`;
-  write("ijin", page({ path: "ijin/", title: `偉人の名前一覧（${people.length}人）｜歴史上の人物の姓名判断・画数と評価｜${SITE}`, h1: "偉人の名前を姓名判断",
+  write("ijin", page({ path: "ijin/", title: `偉人の名前一覧【${people.length}人】歴史上の人物を姓名判断｜時代別・画数つき`, h1: "偉人の名前を姓名判断",
     desc: `坂本龍馬・織田信長・夏目漱石など、歴史上の人物${people.length}人の名前を姓名判断。画数と五格、💮◎〇△の評価を時代別に紹介します。`,
     crumbs: [{ name: "偉人の名前", path: "ijin/" }], body }));
 }
@@ -233,7 +233,7 @@ ${ERAS.map((e, i) => { const ps = people.filter((p) => p.era === e); return ps.l
 <p>姓名判断では、名前の文字の画数から「五格」とよばれる5つの数を出します。姓の合計が天格、姓の最後と名の最初の字の合計が人格、名の合計が地格、全部の合計が総格、総格から人格を引いた数が外格です。</p>
 <p>それぞれの数には吉凶とキーワードがあり、とくに人格（性格の中心）と総格（人生全体）が大切だと考えられています。このサイトでは画数を新字体で数えています。旧字体で数える流派では、結果が変わることがあります。</p>
 </section>`;
-  write("", page({ path: "", title: `姓名判断｜名前を💮◎〇△で無料診断・赤ちゃんの名づけにも｜${SITE}`, h1: "名前の姓名判断",
+  write("", page({ path: "", title: `【無料】姓名判断｜名前を入れるだけで画数の吉凶を4段階診断｜${SITE}`, h1: "名前の姓名判断",
     desc: "姓と名を入れるだけで、名前の画数から五格（天格・人格・地格・外格・総格）を出して、💮◎〇△の4段階で評価します。画数の型が似ている偉人もわかります。",
     scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "kanji-imi-data.js", "app.js"],
     jsonld: [{ "@context": "https://schema.org", "@type": "WebApplication", name: SITE + " 姓名判断", url: BASE + "/", applicationCategory: "LifestyleApplication", operatingSystem: "Any", offers: { "@type": "Offer", price: "0", priceCurrency: "JPY" } }],
@@ -244,7 +244,7 @@ writeFileSync(join(ROOT, "assets/js/kanji-imi-data.js"), "/* 名づけ用の漢�
 // ---- 赤ちゃんの名前さがし ----
 const akYomi = buildAkachanYomi({ page, write, esc, S, IMI, NAMES, kanjiSet: new Set(JSON.parse(readFileSync(join(ROOT, "data/kanji.json"), "utf8")).map((k) => k.ch)) });
 writeFileSync(join(ROOT, "assets/js/names-data.js"), "/* 赤ちゃんの名前の候補（data/names.mjs から作る。手で直さない） */\n(self.Namae = self.Namae || {}).names = " + JSON.stringify(NAMES.map((n) => [n.mei, n.yomi, n.g])) + ";\n");
-write("akachan", page({ path: "akachan/", title: `赤ちゃんの姓名判断・名前さがし｜名字に合う名前を無料で｜${SITE}`, h1: "赤ちゃんの姓名判断・名前さがし",
+write("akachan", page({ path: "akachan/", title: `【無料】赤ちゃんの姓名判断｜名字に合う名前を評価順にずらっと表示｜${SITE}`, h1: "赤ちゃんの姓名判断・名前さがし",
   desc: `赤ちゃんの名づけに。名字を入れるだけで、名前の候補を姓名判断の評価（💮◎〇△）がよい順に表示します。男の子・女の子、文字数、響き、好きな漢字でしぼりこめて、読みから漢字もさがせます。`,
   crumbs: [{ name: "赤ちゃんの名前さがし", path: "akachan/" }], scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "core.js", "names-data.js", "akachan.js"],
   body: `<div class="hero">
@@ -312,7 +312,7 @@ ${akYomi.indexHtml}
 </section>` }));
 
 // ---- 名づけ候補くらべ ----
-write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤ちゃんの名前の候補を姓名判断でくらべる｜${SITE}`, h1: "名づけ候補くらべ",
+write("nazuke", page({ path: "nazuke/", title: `名づけ候補くらべ｜赤ちゃんの名前を画数・意味・読みで比較【無料】`, h1: "名づけ候補くらべ",
   desc: "赤ちゃんの名前の候補をいくつでも入れて、姓名判断の評価（💮◎〇△）と五格でくらべられます。候補はお使いの端末にだけ保存され、どこにも送りません。",
   crumbs: [{ name: "名づけ候補くらべ", path: "nazuke/" }], scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "ijin.js", "core.js", "kanji-imi-data.js", "nazuke.js"],
   body: `<div class="hero">

@@ -46,7 +46,7 @@ export function buildAkachanYomi({ page, write, esc, S, IMI, NAMES, kanjiSet }) 
 <div class="prose"><p>同じ「${esc(o.yomi)}」でも、使う漢字で印象と画数が変わります。名字と合わせたときの五格（人格・総格など）は名字によって変わるので、上の欄に名字を入れてくらべてみてください。</p>
 <p>気になる名前は、<a href="${up}akachan/">赤ちゃんの名前さがし</a>で♥を押すと<a href="${up}nazuke/">名づけ候補くらべ</a>に保存できます。</p></div></section>
 ${near.length ? `<section class="sec" aria-labelledby="yo"><h2 id="yo">「${esc(o.yomi[0])}」ではじまるほかの名前</h2><ul class="kchips is-wide">${near.map((x) => `<li><a href="../${x.yomi}/">${esc(x.yomi)}</a></li>`).join("")}</ul></section>` : ""}`;
-    write(`akachan/yomi/${o.yomi}`, page({ path: `akachan/yomi/${o.yomi}/`, title: `「${o.yomi}」の名前の漢字一覧と姓名判断｜${label}の名づけ｜なまえ帖`, h1: `「${esc(o.yomi)}」の名前と漢字`,
+    write(`akachan/yomi/${o.yomi}`, page({ path: `akachan/yomi/${o.yomi}/`, title: `「${o.yomi}」の漢字一覧【${o.list.length}通り】${o.list.slice(0, 3).join("・")}など｜画数と姓名判断`, h1: `「${esc(o.yomi)}」の名前と漢字`,
       desc: `「${o.yomi}」と読む${label}の名前の漢字${o.list.length}通り（${o.list.slice(0, 5).join("・")}など）。画数と字の意味、名字と合わせた姓名判断の評価がわかります。`,
       crumbs: [{ name: "赤ちゃんの名前さがし", path: "akachan/" }, { name: `「${o.yomi}」の名前`, path: `akachan/yomi/${o.yomi}/` }],
       scripts: ["seimei-strokes.js", "seimei.js", "luck.js", "core.js", "yomi-page.js"], body }));

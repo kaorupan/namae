@@ -79,7 +79,7 @@ ${(phrases.get(k.ch) || []).length ? `<section class="sec" aria-labelledby="ph">
 ${sameYomi.length ? `<section class="sec" aria-labelledby="sy"><h2 id="sy">同じ読みの漢字</h2>${chips(sameYomi.slice(0, 40), up)}</section>` : ""}
 <section class="sec" aria-labelledby="ss"><h2 id="ss">同じ${k.strokes}画の漢字</h2>${chips(sameStroke.slice(0, 40), up)}${sameStroke.length > 40 ? `<p><a href="${up}kakusu/${k.strokes}/">${k.strokes}画の漢字をすべて見る（${sameStroke.length + 1}字）→</a></p>` : ""}</section>
 ${sameRad.length ? `<section class="sec" aria-labelledby="sr"><h2 id="sr">同じ部首（${esc(k.radCh)}・${esc(radName(k.rad).split("・")[0])}）の漢字</h2>${chips(sameRad.slice(0, 40), up)}<p><a href="${up}bushu/${k.rad}/">部首「${esc(k.radCh)}」の漢字をすべて見る →</a></p></section>` : ""}`;
-    write(`kanji/${k.ch}`, page({ path: `kanji/${k.ch}/`, title: IMI[k.ch] ? `「${k.ch}」の意味・読み方・画数｜名前に使う願い｜漢字辞典` : k.old ? `「${k.ch}」の読み方・画数・旧字体（${k.old}）｜名前に使える？｜漢字辞典` : `「${k.ch}」の読み方・画数・部首｜名前に使える？｜漢字辞典`, h1: `「${esc(k.ch)}」の漢字`, desc,
+    write(`kanji/${k.ch}`, page({ path: `kanji/${k.ch}/`, title: IMI[k.ch] ? `「${k.ch}」の意味と読み方｜名前にこめる願い・画数【${TYPE[k.type]}】` : k.old ? `「${k.ch}」の読み方・画数・旧字体「${k.old}」｜名前に使える？` : `「${k.ch}」の読み方・画数・部首｜名前に使える？【${TYPE[k.type]}】`, h1: `「${esc(k.ch)}」の漢字`, desc,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: `「${k.ch}」`, path: `kanji/${k.ch}/` }], body }));
     urls.push(`kanji/${k.ch}/`);
   }
@@ -94,7 +94,7 @@ ${jo.length ? `<section class="sec" aria-labelledby="j"><h2 id="j">${n}画の常
 ${ji.length ? `<section class="sec" aria-labelledby="m"><h2 id="m">${n}画の人名用漢字</h2>${chips(ji, up)}</section>` : ""}
 <section class="sec prose" aria-labelledby="s"><h2 id="s">姓名判断での${n}画</h2><p>姓名判断で${n}は「${esc(l.keyword)}」の意味をもつ${l.luck}数です。画数は新字体で数えています。名前全体の評価は<a href="${up}../">姓名判断</a>で見られます。</p></section>
 <nav class="sec" aria-label="ほかの画数"><h2>ほかの画数</h2><ul class="kchips">${strokesList.map((m) => `<li><a href="../${m}/"${m === n ? ' aria-current="page"' : ""}>${m}画</a></li>`).join("")}</ul></nav>`;
-    write(`kanji/kakusu/${n}`, page({ path: `kanji/kakusu/${n}/`, title: `${n}画の漢字一覧｜名前に使える常用漢字・人名用漢字｜漢字辞典`, h1: `${n}画の漢字`,
+    write(`kanji/kakusu/${n}`, page({ path: `kanji/kakusu/${n}/`, title: `${n}画の漢字一覧【${ks.length}字】名前に使える常用漢字・人名用漢字`, h1: `${n}画の漢字`,
       desc: `${n}画の漢字${ks.length}字の一覧。常用漢字と人名用漢字に分けて、名前に使える${n}画の漢字を紹介します。`,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: `${n}画の漢字`, path: `kanji/kakusu/${n}/` }], body }));
     urls.push(`kanji/kakusu/${n}/`);
@@ -116,7 +116,7 @@ ${kunK.length ? `<section class="sec" aria-labelledby="lk"><h2 id="lk">訓読み
 <section class="sec prose" aria-labelledby="ln"><h2 id="ln">読みについて</h2><p>常用漢字の読みと例は文化庁「常用漢字表」、人名用漢字の読みは辞書などで知られている読みです。名前の読み方は、ここにない読みでも常識の範囲で自由に決められます。</p>
 <p><a href="${up}../akachan/">「${esc(r)}」の響きの名前をさがす →</a></p></section>
 ${near.length ? `<nav class="sec" aria-labelledby="lx"><h2 id="lx">「${esc(r[0])}」ではじまるほかの読み</h2><ul class="kchips is-wide">${near.map(([x]) => `<li><a href="../${x}/">${esc(x)}</a></li>`).join("")}</ul></nav>` : ""}`;
-    write(`kanji/yomi/${r}`, page({ path: `kanji/yomi/${r}/`, title: `「${r}」と読む漢字一覧（${top}など${ks.length}字）｜意味・画数つき｜漢字辞典`, h1: `「${esc(r)}」と読む漢字`,
+    write(`kanji/yomi/${r}`, page({ path: `kanji/yomi/${r}/`, title: `「${r}」と読む漢字一覧【${ks.length}字】${top}など｜意味つき`, h1: `「${esc(r)}」と読む漢字`,
       desc: `「${r}」と読む漢字${ks.length}字の一覧。${top}など、音読み・訓読みに分けて、意味・画数・使い方の例を紹介します。`,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: `「${r}」と読む漢字`, path: `kanji/yomi/${r}/` }], body }));
     urls.push(`kanji/yomi/${r}/`);
@@ -130,12 +130,12 @@ ${near.length ? `<nav class="sec" aria-labelledby="lx"><h2 id="lx">「${esc(r[0]
 <section class="sec" aria-labelledby="b1"><h2 id="b1">部首「${esc(rc)}」の漢字</h2>${chips(ks, up)}</section>
 <section class="sec prose" aria-labelledby="b2"><h2 id="b2">部首について</h2><p>部首は、康熙字典の214部首の分け方によります。辞書によっては、同じ字でも別の部首に分けていることがあります（たとえば新字体で形が変わった字など）。</p></section>
 <nav class="sec" aria-labelledby="b3"><h2 id="b3">ほかの部首</h2><ul class="kchips">${radList.map((m) => `<li><a href="../${m}/" title="${esc(radName(m))}"${m === n ? ' aria-current="page"' : ""}>${esc(byRad.get(m)[0].radCh)}</a></li>`).join("")}</ul></nav>`;
-    write(`kanji/bushu/${n}`, page({ path: `kanji/bushu/${n}/`, title: `部首「${rc}」（${nm.split("・")[0]}）の漢字一覧（${ks.length}字）｜漢字辞典`, h1: `部首「${esc(rc)}」の漢字`,
+    write(`kanji/bushu/${n}`, page({ path: `kanji/bushu/${n}/`, title: `${nm.split("・").pop()}（部首「${rc}」）の漢字一覧【${ks.length}字】読み方・画数つき`, h1: `部首「${esc(rc)}」の漢字`,
       desc: `部首「${rc}」（${nm}）の漢字${ks.length}字の一覧。${ks.slice(0, 8).map((k) => k.ch).join("・")}など、名前に使える漢字を画数順に紹介します。`,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: "部首", path: "kanji/bushu/" }, { name: `部首「${rc}」`, path: `kanji/bushu/${n}/` }], body }));
     urls.push(`kanji/bushu/${n}/`);
   }
-  write("kanji/bushu", page({ path: "kanji/bushu/", title: "部首一覧｜部首から漢字をさがす｜漢字辞典", h1: "部首から漢字をさがす",
+  write("kanji/bushu", page({ path: "kanji/bushu/", title: "部首一覧と呼び方｜さんずい・きへんなど部首から漢字をさがす", h1: "部首から漢字をさがす",
     desc: "名前に使える漢字を、部首からさがせる一覧です。部首の呼び名（さんずい・きへんなど）と、その部首の漢字の数がわかります。",
     crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: "部首", path: "kanji/bushu/" }],
     body: `<section class="sec"><ul class="bushu-list">${radList.map((n) => `<li><a href="${n}/"><b>${esc(byRad.get(n)[0].radCh)}</b><span>${esc(radName(n))}</span><small>${byRad.get(n).length}字</small></a></li>`).join("")}</ul>
@@ -161,12 +161,12 @@ ${x.strokes ? `<div><dt>画数</dt><dd>${x.strokes}画<small>（新字体の「$
 <p>「${esc(x.old)}」は常用漢字・人名用漢字に入っていないため、<b>新しく子どもの名前に使うことはできません</b>。名前には新字体の「<a href="../${x.ch}/">${esc(x.ch)}</a>」を使います。</p>
 <p class="note">すでに戸籍に旧字体で登録されている名字や名前は、そのまま使われています。</p></section>
 <section class="sec" aria-labelledby="o3"><h2 id="o3">ほかの旧字体</h2><p><a href="../kyuji/">新字体と旧字体の一覧を見る →</a></p></section>`;
-    write(`kanji/${x.old}`, page({ path: `kanji/${x.old}/`, title: `「${x.old}」の読み方・意味｜「${x.ch}」の旧字体｜漢字辞典`, h1: `「${esc(x.old)}」の読み方（「${esc(x.ch)}」の旧字体）`,
+    write(`kanji/${x.old}`, page({ path: `kanji/${x.old}/`, title: `「${x.old}」の読み方は？「${x.ch}」の旧字体｜意味・画数・名前に使える？`, h1: `「${esc(x.old)}」の読み方（「${esc(x.ch)}」の旧字体）`,
       desc: `「${x.old}」は「${x.ch}」の旧字体です。読み方は${onH.length ? `「${onH.join("・")}」` : ""}${k.kun.length ? `「${k.kun.slice(0, 3).join("・")}」` : ""}など。画数や、名前に使えるかどうかも紹介します。`,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: "旧字体", path: "kanji/kyuji/" }, { name: `「${x.old}」`, path: `kanji/${x.old}/` }], body }));
     urls.push(`kanji/${x.old}/`);
   }
-  write("kanji/kyuji", page({ path: "kanji/kyuji/", title: `旧字体の一覧（${KY.length}字）｜新字体と旧字体の対応表｜漢字辞典`, h1: "新字体と旧字体の一覧",
+  write("kanji/kyuji", page({ path: "kanji/kyuji/", title: `旧字体一覧表【${KY.length}字】新字体との対応がひと目でわかる`, h1: "新字体と旧字体の一覧",
     desc: `常用漢字の新字体と旧字体（康熙字典体）の対応表です。學→学、應→応、櫻→桜など${KY.length}字。旧字体の読み方と、名前に使えるかどうかもわかります。`,
     crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: "旧字体", path: "kanji/kyuji/" }],
     body: `<p class="lead">常用漢字の新字体と、旧字体（康熙字典体）の対応表です。字をえらぶと、読み方や意味がわかります。<span class="kyuji-ok">名</span>がついた旧字体は、人名用漢字として名前に使えます。</p>
@@ -188,7 +188,7 @@ ${x.strokes ? `<div><dt>画数</dt><dd>${x.strokes}画<small>（新字体の「$
 <section class="sec" aria-labelledby="y"><h2 id="y">読みから探す</h2>
 ${gyo.filter(([, rs]) => rs.length).map(([g, rs]) => `<h3>${g}行</h3><ul class="kchips is-wide">${rs.map(([r, ks]) => `<li><a href="yomi/${r}/">${esc(r)}<small>${ks.length}</small></a></li>`).join("")}</ul>`).join("\n")}
 </section>`;
-    write("kanji", page({ path: "kanji/", title: "漢字辞典｜名前に使える漢字の読み方・画数・部首", h1: "漢字辞典",
+    write("kanji", page({ path: "kanji/", title: "名前に使える漢字辞典｜読み方・画数・部首・意味で探せる【無料】", h1: "漢字辞典",
       desc: "名前に使える常用漢字・人名用漢字の読み方・画数・部首を調べられる漢字辞典。画数別・読み別の一覧から、名づけに使う漢字も探せます。",
       crumbs: [{ name: "漢字辞典", path: "kanji/" }], scripts: ["kanji-search.js"], body }));
     urls.unshift("kanji/");
