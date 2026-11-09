@@ -90,6 +90,9 @@ ${sameRad.length ? `<section class="sec" aria-labelledby="sr"><h2 id="sr">同じ
     const jo = ks.filter((k) => k.type === "joyo"), ji = ks.filter((k) => k.type === "jinmei");
     const l = L.of(n);
     const body = `<p class="lead">${n}画の漢字は${ks.length}字（常用漢字${jo.length}字・人名用漢字${ji.length}字）。どれも子どもの名前に使えます。字をえらぶと、読み方と部首がわかります。</p>
+<section class="sec sec-form" aria-labelledby="g"><h2 id="g">${n}画の字で名前を考えるなら</h2>
+<p>姓名判断では、名字と名前の画数の組み合わせで運勢を見ます。${n}画は「${esc(l.keyword)}」の意味をもつ${l.luck}数です（<a href="${up}../kazu/${n}/">${n}画の意味をくわしく</a>）。</p>
+<p class="cta-row"><a class="btn" href="${up}../akachan/">赤ちゃんの名前を評価順にさがす</a> <a class="btn btn-sub" href="${up}../">名前を入れて姓名判断</a></p></section>
 ${jo.length ? `<section class="sec" aria-labelledby="j"><h2 id="j">${n}画の常用漢字</h2>${chips(jo, up)}</section>` : ""}
 ${ji.length ? `<section class="sec" aria-labelledby="m"><h2 id="m">${n}画の人名用漢字</h2>${chips(ji, up)}</section>` : ""}
 <section class="sec prose" aria-labelledby="s"><h2 id="s">姓名判断での${n}画</h2><p>姓名判断で${n}は「${esc(l.keyword)}」の意味をもつ${l.luck}数です。画数は新字体で数えています。名前全体の評価は<a href="${up}../">姓名判断</a>で見られます。</p></section>

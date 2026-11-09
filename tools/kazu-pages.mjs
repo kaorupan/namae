@@ -89,7 +89,7 @@ ${kanjiStrokes.has(n) ? `<section class="sec" aria-labelledby="k5"><h2 id="k5">$
 <nav class="sec" aria-labelledby="k6"><h2 id="k6">ほかの${l.luck}の数</h2><ul class="kchips is-wide">${same.map((m) => `<li><a href="../${m}/">${m}画</a></li>`).join("")}</ul>
 <p class="kz-pn">${n > 1 ? `<a href="../${n - 1}/">← ${n - 1}画</a>` : ""}<a href="../">1〜81の一覧</a>${n < 81 ? `<a href="../${n + 1}/">${n + 1}画 →</a>` : ""}</p></nav>`;
     write(`kazu/${n}`, page({ path: `kazu/${n}/`, title: `姓名判断で${n}画は「${l.luck}」｜${l.keyword}の意味・性格・計算例`, h1: `${n}画の意味（姓名判断）`,
-      desc: `姓名判断の${n}画は${l.luck}数で、「${l.keyword}」を表します。${k[0]}`,
+      desc: `姓名判断の${n}画は${l.luck}数で、「${l.keyword}」を表します。${k[0].startsWith(l.keyword) ? k[0].slice(k[0].indexOf("。") + 1) : k[0]}`,
       crumbs: [{ name: "画数の意味", path: "kazu/" }, { name: `${n}画`, path: `kazu/${n}/` }], body }));
     urls.push(`kazu/${n}/`);
   }

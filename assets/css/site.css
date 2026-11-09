@@ -392,3 +392,8 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
 .kyuji-list span[aria-hidden] { font-size: 13px; color: var(--muted); }
 .kyuji-ok { display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--mint); color: #fff; font: 700 11px var(--round); }
 .yomi-t td:nth-child(2) { white-space: nowrap; }
+/* 画数の漢字一覧 → 名前さがし・姓名判断への案内 */
+.cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 14px; }
+.cta-row .btn { flex: 1 1 220px; padding: 0 18px; font-size: 16px; }
+.btn-sub { background: #fff; color: var(--pink-deep); box-shadow: 0 5px 0 var(--pink); border: 2px solid var(--pink); }
+.btn-sub:hover { color: var(--pink-deep); }
