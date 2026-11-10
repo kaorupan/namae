@@ -397,3 +397,12 @@ main > .sec:nth-of-type(4n) h2::before { background: var(--lemon); box-shadow: 8
 .cta-row .btn { flex: 1 1 220px; padding: 0 18px; font-size: 16px; }
 .btn-sub { background: #fff; color: var(--pink-deep); box-shadow: 0 5px 0 var(--pink); border: 2px solid var(--pink); }
 .btn-sub:hover { color: var(--pink-deep); }
+/* 名字のページ */
+.my-table td.mark { font-size: 20px; text-align: center; width: 3em; }
+.my-table th small, .my-table td small { display: block; font-size: 12px; color: var(--muted, #8a7a86); font-weight: 400; }
+.my-pat { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+.my-pat li { background: #fff; border: 2px solid var(--pink-soft, #ffd3e2); border-radius: 14px; padding: 10px 12px; }
+.my-pat b { display: block; font-size: 18px; color: var(--pink-deep); }
+.my-pat span { font-size: 13px; }
+.my-table th small, .my-table td small { background: none; padding: 0; margin: 2px 0 0; border-radius: 0; color: #8a7a86; }
+.my-table tbody tr > * { padding-top: 8px; padding-bottom: 8px; }

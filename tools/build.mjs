@@ -11,6 +11,7 @@ import NAMES from "../data/names.mjs";
 import IMI from "../data/kanji-imi.mjs";
 import { buildAkachanYomi } from "./akachan-pages.mjs";
 import { buildKazu } from "./kazu-pages.mjs";
+import { buildMyoji } from "./myoji-pages.mjs";
 
 const require = createRequire(import.meta.url);
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -56,7 +57,7 @@ function page({ path, title, desc: rawDesc, body, h1, crumbs = [], scripts = [],
   const ld = jsonld.concat(crumbs.length ? [{ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: bc.map((b, i) => ({ "@type": "ListItem", position: i + 1, name: b.name, item: encodeURI(b.url) })) }] : []);
   // メニュー：名づけの3つを主役に、調べものは「もっと見る」へ
   const nav = [["", "姓名判断"], ["akachan/", "赤ちゃんの名前"], ["nazuke/", "候補くらべ"]];
-  const sub = [["kazu/", "画数の意味"], ["kanji/", "漢字辞典"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人の名前"]];
+  const sub = [["myoji/", "名字から姓名判断"], ["kazu/", "画数の意味"], ["kanji/", "漢字辞典"], ["yoji/", "四字熟語"], ["kotowaza/", "ことわざ"], ["ijin/", "偉人の名前"]];
   const subOn = sub.some(([p]) => path.startsWith(p));
   return `<!doctype html>
 <html lang="ja">
@@ -441,11 +442,12 @@ write("privacy", page({ path: "privacy/", h1: "プライバシーポリシー", 
 const kazu = buildKazu({ page, write, esc, L, people, S, NAMES, kanjiStrokes: new Set(JSON.parse(readFileSync(join(ROOT, "data/kanji.json"), "utf8")).map((k) => k.strokes)) });
 
 // ---- 漢字辞典 ----
+const myoji = buildMyoji({ page, write, esc, S, C, L, NAMES, kanjiSet: new Set(JSON.parse(readFileSync(join(ROOT, "data/kanji.json"), "utf8")).map((k) => k.ch)) });
 const kanji = buildKanji({ ROOT, page, write, esc, people, L, phrases: phrasesByChar() });
 const phrases = buildPhrases({ page, write, esc, kanjiSet: kanji.set });
 
 // ---- sitemap・robots ----
-const urls = ["", "akachan/", ...akYomi.urls, "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, ...kazu.urls, "about/", "contact/", "privacy/"];
+const urls = ["", "akachan/", ...akYomi.urls, "nazuke/", "ijin/", ...people.map((p) => `ijin/${p.slug}/`), ...kanji.urls, ...phrases.urls, ...kazu.urls, ...myoji.urls, "about/", "contact/", "privacy/"];
 writeFileSync(join(ROOT, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `<url><loc>${BASE}/${encodeURI(u)}</loc></url>`).join("\n")}\n</urlset>\n`);
 writeFileSync(join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\nSitemap: ${BASE}/sitemap.xml\n`);
 console.log("built", urls.length, "pages");

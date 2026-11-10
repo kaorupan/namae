@@ -33,3 +33,17 @@ test("名前の候補：名前に使える字（常用・人名用漢字、か�
 test("画数の意味：1〜81がすべてそろう", () => {
   for (let n = 1; n <= 81; n++) assert.ok(Array.isArray(kazu[n]) && kazu[n].length === 4 && kazu[n].every((t) => t.length > 10), String(n));
 });
+
+test("名字：すべての字の画数がわかり、読みはひらがな、表記は重ならない", async () => {
+  const { createRequire } = await import("node:module");
+  const require = createRequire(import.meta.url);
+  const S = require("../assets/js/seimei.js");
+  const MYOJI = (await import("../data/myoji.mjs")).default;
+  const seen = new Set();
+  for (const m of MYOJI) {
+    assert.ok(!seen.has(m.sei), m.sei); seen.add(m.sei);
+    for (const y of m.yomi) assert.match(y, /^[ぁ-ゖー]+$/, m.sei);
+    for (const c of S.charStrokes(m.sei)) assert.ok(c.strokes > 0, m.sei + c.ch);
+  }
+  assert.ok(MYOJI.length >= 300);
+});
