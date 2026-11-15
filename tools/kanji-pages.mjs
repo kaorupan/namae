@@ -109,7 +109,14 @@ ${ji.length ? `<section class="sec" aria-labelledby="m"><h2 id="m">${n}画の人
     const up = "../../";
     const sorted = ks.slice().sort((a, b) => (a.type === b.type ? 0 : a.type === "joyo" ? -1 : 1) || a.strokes - b.strokes);
     const onK = sorted.filter((k) => k.on.map(kata2hira).includes(r)), kunK = sorted.filter((k) => k.kun.includes(r));
-    const row = (k) => { const ex = exOf(k, r); return `<tr><th scope="row"><a class="kbig-s" href="${up}${k.ch}/">${esc(k.ch)}</a></th><td>${k.strokes}画<br><small>${TYPE[k.type]}</small></td><td>${IMI[k.ch] ? esc(IMI[k.ch][0]) : ""}${ex.length ? `<br><small>例：${esc(ex.join("、"))}</small>` : ""}${!IMI[k.ch] && !ex.length ? `<a href="${up}${k.ch}/">意味・読み方を見る</a>` : ""}</td></tr>`; };
+    const extraMeanings = r === "どう" ? {
+      洞: "ほらあな。奥まで見通す。",
+      胴: "人や動物の胴体。物の中央部分。",
+      動: "うごく。うごかす。",
+      働: "はたらく。仕事をする。",
+      銅: "あかがね。赤みのある金属。",
+    } : {};
+    const row = (k) => { const ex = exOf(k, r); const meaning = IMI[k.ch]?.[0] ?? extraMeanings[k.ch]; return `<tr><th scope="row"><a class="kbig-s" href="${up}${k.ch}/">${esc(k.ch)}</a></th><td>${k.strokes}画<br><small>${TYPE[k.type]}</small></td><td>${meaning ? esc(meaning) : ""}${ex.length ? `<br><small>例：${esc(ex.join("、"))}</small>` : ""}${!meaning && !ex.length ? `<a href="${up}${k.ch}/">意味・読み方を見る</a>` : ""}</td></tr>`; };
     const table = (list) => `<table class="ktable yomi-t"><thead><tr><th scope="col">漢字</th><th scope="col">画数</th><th scope="col">意味・使い方</th></tr></thead><tbody>${list.map(row).join("")}</tbody></table>`;
     const top = sorted.slice(0, 6).map((k) => k.ch).join("・");
     const near = yomiPages.filter(([x]) => x !== r && x[0] === r[0]).slice(0, 16);
@@ -120,7 +127,7 @@ ${kunK.length ? `<section class="sec" aria-labelledby="lk"><h2 id="lk">訓読み
 <p><a href="${up}../akachan/">「${esc(r)}」の響きの名前をさがす →</a></p></section>
 ${near.length ? `<nav class="sec" aria-labelledby="lx"><h2 id="lx">「${esc(r[0])}」ではじまるほかの読み</h2><ul class="kchips is-wide">${near.map(([x]) => `<li><a href="../${x}/">${esc(x)}</a></li>`).join("")}</ul></nav>` : ""}`;
     write(`kanji/yomi/${r}`, page({ path: `kanji/yomi/${r}/`, title: `「${r}」と読む漢字一覧【${ks.length}字】${top}など｜意味つき`, h1: `「${esc(r)}」と読む漢字`,
-      desc: `「${r}」と読む漢字${ks.length}字の一覧。${top}など、音読み・訓読みに分けて、意味・画数・使い方の例を紹介します。`,
+      desc: r === "どう" ? `同・動・道・堂など、「どう」と読む漢字${ks.length}字を掲載。画数や意味、熟語の例を見比べられます。` : `「${r}」と読む漢字${ks.length}字の一覧。${top}など、音読み・訓読みに分けて、意味・画数・使い方の例を紹介します。`,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: `「${r}」と読む漢字`, path: `kanji/yomi/${r}/` }], body }));
     urls.push(`kanji/yomi/${r}/`);
   }
