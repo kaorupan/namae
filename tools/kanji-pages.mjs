@@ -53,7 +53,7 @@ export function buildKanji({ ROOT, page, write, esc, people, L, phrases = new Ma
     const parentNote = k.parent ? `「${esc(k.ch)}」は常用漢字「<a href="../${k.parent}/">${esc(k.parent)}</a>」の旧字体・異体字で、人名用漢字として名前に使えます。読みは「${esc(k.parent)}」と同じです。` : "";
     const variant = [k.old ? `旧字体は「${esc(k.old)}」です。` : "", k.jinmeiVariants.length ? `${k.jinmeiVariants.map((c) => byCh.has(c) ? `「<a href="../${c}/">${esc(c)}</a>」` : `「${esc(c)}」`).join("")}も人名用漢字として名前に使えます。` : ""].join("");
     const readTxt = [onH.length ? `音読みは「${onH.join("・")}」` : "", k.kun.length ? `訓読みは「${k.kun.slice(0, 4).join("・")}」` : ""].filter(Boolean).join("、");
-    const desc = `「${k.ch}」は${k.strokes}画の${TYPE[k.type]}。${IMI[k.ch] ? "意味は「" + IMI[k.ch][0].replace(/。$/, "") + "」。" : ""}${readTxt || "読み"}など。部首は「${k.radCh}」。名前に使えるか、姓名判断での画数、同じ読み・同じ画数の漢字も紹介します。`;
+    const desc = k.ch === "苑" ? `「苑」の${readTxt}。意味は「草木を植えた庭」。8画・くさかんむりの人名用漢字です。音読み・訓読みの一覧、名前にこめる願い、同じ読みの漢字を確認できます。` : `「${k.ch}」は${k.strokes}画の${TYPE[k.type]}。${IMI[k.ch] ? "意味は「" + IMI[k.ch][0].replace(/。$/, "") + "」。" : ""}${readTxt || "読み"}など。部首は「${k.radCh}」。名前に使えるか、姓名判断での画数、同じ読み・同じ画数の漢字も紹介します。`;
     const body = `<section class="sec kmain" aria-label="基本の情報">
 <div class="kbig" aria-hidden="true">${esc(k.ch)}</div>
 <dl class="kinfo">
@@ -79,7 +79,7 @@ ${(phrases.get(k.ch) || []).length ? `<section class="sec" aria-labelledby="ph">
 ${sameYomi.length ? `<section class="sec" aria-labelledby="sy"><h2 id="sy">同じ読みの漢字</h2>${chips(sameYomi.slice(0, 40), up)}</section>` : ""}
 <section class="sec" aria-labelledby="ss"><h2 id="ss">同じ${k.strokes}画の漢字</h2>${chips(sameStroke.slice(0, 40), up)}${sameStroke.length > 40 ? `<p><a href="${up}kakusu/${k.strokes}/">${k.strokes}画の漢字をすべて見る（${sameStroke.length + 1}字）→</a></p>` : ""}</section>
 ${sameRad.length ? `<section class="sec" aria-labelledby="sr"><h2 id="sr">同じ部首（${esc(k.radCh)}・${esc(radName(k.rad).split("・")[0])}）の漢字</h2>${chips(sameRad.slice(0, 40), up)}<p><a href="${up}bushu/${k.rad}/">部首「${esc(k.radCh)}」の漢字をすべて見る →</a></p></section>` : ""}`;
-    write(`kanji/${k.ch}`, page({ path: `kanji/${k.ch}/`, title: IMI[k.ch] ? `「${k.ch}」の意味と読み方｜名前にこめる願い・画数【${TYPE[k.type]}】` : k.old ? `「${k.ch}」の読み方・画数・旧字体「${k.old}」｜名前に使える？` : `「${k.ch}」の読み方・画数・部首｜名前に使える？【${TYPE[k.type]}】`, h1: `「${esc(k.ch)}」の漢字`, desc,
+    write(`kanji/${k.ch}`, page({ path: `kanji/${k.ch}/`, title: k.ch === "苑" ? "苑の読み方・意味｜音読み・訓読みと名前に使うときの画数" : IMI[k.ch] ? `「${k.ch}」の意味と読み方｜名前にこめる願い・画数【${TYPE[k.type]}】` : k.old ? `「${k.ch}」の読み方・画数・旧字体「${k.old}」｜名前に使える？` : `「${k.ch}」の読み方・画数・部首｜名前に使える？【${TYPE[k.type]}】`, h1: `「${esc(k.ch)}」の漢字`, desc,
       crumbs: [{ name: "漢字辞典", path: "kanji/" }, { name: `「${k.ch}」`, path: `kanji/${k.ch}/` }], body }));
     urls.push(`kanji/${k.ch}/`);
   }
